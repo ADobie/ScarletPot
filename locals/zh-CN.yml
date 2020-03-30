@@ -1,0 +1,4 @@
+zh-CN:
+  install:
+    welcome: "欢迎您使用ScarletPot 主动诱导型蜜罐防御系统，下面将开始安装引导程序"
+    config_load_fail: "配置文件加载失败"
