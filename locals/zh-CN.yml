@@ -2,3 +2,8 @@ zh-CN:
   install:
     welcome: "欢迎您使用ScarletPot 主动诱导型蜜罐防御系统，下面将开始安装引导程序"
     config_load_fail: "配置文件加载失败"
+    config_create_fail: "配置文件创建失败"
+    config_mkdir_fail: "配置文件夹创建失败"
+    config_overwrite_warning: "配置文件已存在，继续安装程序将会覆盖原先的配置文件"
+    if_continue: "是否继续？(y/N)"
+    begin_install: "下面开始安装导向"
