@@ -6,7 +6,7 @@ import (
 	"github.com/BurntSushi/toml"
 	"io/ioutil"
 	"os"
-	"scarletpot/db/mysql"
+	db "scarletpot/db/mysql"
 	"scarletpot/utils"
 	"scarletpot/utils/color"
 	"scarletpot/utils/conf"
@@ -112,13 +112,15 @@ func databaseInstall() error {
 	config.Database.DbUser = dbUser
 	config.Database.DbPass = dbPass
 	config.Database.DbName = dbName
-
-	if db.CheckMysql(dbUser, dbPass, dbHost, dbName) {
-		log.Succ("zh-CN", "install.db_connect_suc")
-		//TODO: 创建、初始化数据表
-	} else {
-		log.Err("zh-CN", "install.db_connect_fail")
+	if dbType == 1 {
+		if db.CheckMysql(dbUser, dbPass, dbHost, dbName) {
+			log.Succ("zh-CN", "install.db_connect_suc")
+			//TODO: 创建、初始化数据表
+		} else {
+			log.Err("zh-CN", "install.db_connect_fail")
+		}
 	}
+
 	//fmt.Println("数据库信息：", config.Database.DbType, config.Database.DbHost, config.Database.DbUser, config.Database.DbPass, config.Database.DbName)
 	return nil
 }
