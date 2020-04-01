@@ -1,0 +1,12 @@
+[base]
+  systemLanguage = "zh-CN"
+
+[panel]
+  panelAddr = "0.0.0.0:9000"
+
+[database]
+  dbType = "mysql"
+  dbHost = "localhost:3306"
+  dbUser = "root"
+  dbPass = "root"
+  dbName = "scarlet_pot"

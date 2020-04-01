@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"os"
+	"scarletpot/utils/log"
 	"time"
 )
 
@@ -28,4 +29,22 @@ func YnSelect() bool {
 		return false
 	}
 	return false
+}
+
+func InputInt(data *int) error {
+	_, err := fmt.Scan(data)
+	if err != nil {
+		log.Err("zh-CN", "base.scan_failed")
+		return err
+	}
+	return nil
+}
+
+func InputStr(data *string) error {
+	_, err := fmt.Scan(data)
+	if err != nil {
+		log.Err("zh-CN", "base.scan_failed")
+		return err
+	}
+	return nil
 }

@@ -1,4 +1,7 @@
 zh-CN:
+  base:
+    scan_failed: "获取输入失败！"
+
   install:
     welcome: "欢迎您使用ScarletPot 主动诱导型蜜罐防御系统，下面将开始安装引导程序"
     config_load_fail: "配置文件加载失败"
@@ -7,3 +10,24 @@ zh-CN:
     config_overwrite_warning: "配置文件已存在，继续安装程序将会覆盖原先的配置文件"
     if_continue: "是否继续？(y/N)"
     begin_install: "下面开始安装导向"
+#    base_install: "基础设置安装"
+    base_language: "请选择基础语言 (1. zh-CN 2. en-US): "
+    base_success: "基础设置成功"
+    base_error: "基础设置遇到了意料之外的错误❌"
+#    panel_install: "蜜罐管理面板安装"
+    panel_port: "请输入管理面板监听地址 (例如: 0.0.0.0:9000): "
+    panel_success: "面板设置成功"
+    panel_error: "面板设置遇到了意料之外的错误❌"
+    db_type: "请选择使用的数据库 (1. mysql 2. sqlite): "
+    db_host: "请输入数据库主机: "
+    db_user: "请输入数据库用户名: "
+    db_pass: "请输入数据库密码: "
+    db_name: "请输入数据库名: "
+    db_success: "数据库设置成功"
+    db_connect_suc: "数据库连接成功"
+    db_connect_fail: "数据库连接失败"
+    db_error: "数据库设置遇到了意料之外的错误❌"
+    finished: "用户基础配置完成，请访问管理面板地址"
+
+
+
