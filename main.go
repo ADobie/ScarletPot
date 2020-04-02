@@ -1,9 +1,10 @@
 package main
 
-import "scarletpot/install"
+import "scarletpot/protocal/mysql"
 
 func main() {
 	// 引导安装/初始化
-	install.Install()
+	//install.Install()
 	//conf.Init()
+	mysql.Start()
 }
