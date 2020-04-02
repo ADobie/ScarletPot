@@ -24,7 +24,7 @@ var okPack = []byte{0x07, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 
 
 
 func Start() {
-    wg, poolX := pool.New(10)
+    wg, poolX := pool.New(1)
     defer poolX.Release()
     serverAddr, _ := net.ResolveTCPAddr("tcp", "0.0.0.0:3306")
     listener, _ := net.ListenTCP("tcp", serverAddr)
@@ -50,12 +50,12 @@ func connectionHandler(conn net.Conn) {
     fmt.Println("发送握手包..")
     _, err := conn.Write(handshakePack)
     if err != nil {
-       fmt.Println("握手包发送成功..")
+       fmt.Println("握手包发送失败..",err)
     }
 
     _, err = conn.Write(okPack)
     if err != nil {
-       fmt.Println("ok包发送成功",err)
+       fmt.Println("ok包发送失败",err)
     }
 
 }
