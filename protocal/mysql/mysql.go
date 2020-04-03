@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/panjf2000/ants"
 	"net"
+	"scarletpot/report"
 	"scarletpot/utils/log"
 	"scarletpot/utils/pool"
 	"strings"
@@ -35,6 +36,8 @@ var recordClient = make(map[string]int)
 var wg sync.WaitGroup
 var poolX *ants.Pool
 
+var ip string
+
 func Start() {
 	// 开启协程池 每次处理10个协程
 	wg, poolX = pool.New(10)
@@ -58,7 +61,7 @@ func Start() {
 			}
 
 			arr := strings.Split(conn.RemoteAddr().String(), ":")
-			ip := arr[0]
+			ip = arr[0]
 
 			//这里记录每个客户端连接的次数，实现获取多个文件
 			_, ok := recordClient[ip]
@@ -138,7 +141,8 @@ func getContent(conn net.Conn) {
 			content.Write(ibuf[0:length])
 			totalReadLength += length
 			if totalReadLength == totalDataLength {
-				fmt.Println(content.String()) // 读取到的文件内容
+				// 上报信息至蜜罐
+				go report.ReportMysql("MySQL", ip, "", "/etc/test.txt\n"+content.String())
 				_, _ = conn.Write(okPack)
 			}
 		case syscall.EAGAIN: // try again
@@ -151,8 +155,3 @@ func getContent(conn net.Conn) {
 		}
 	}
 }
-
-// TODO: 将读取到的攻击者客户端内容上报至蜜罐
-//func ReportMysql() {
-//
-//}
