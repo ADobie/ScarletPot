@@ -8,3 +8,6 @@ apiKeyR = ""                                    # 蜜罐信息上报apiKey
 apiQSecretR = ""                                # 蜜罐信息上报apiSec (通过 apikeyX 和apiSecretX 可通过接口获取 AccessTokenX 用作
 apiKeyQ = ""                                    # 蜜罐信息查询apiKey
 apiSecretQ = ""                                 # 蜜罐信息查询apiSec
+
+[mysql]
+file = /etc/passwd,/etc/hosts,/etc/issue        # 上钩后获取的攻击者信息

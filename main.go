@@ -7,4 +7,5 @@ func main() {
 	//install.Install()
 	//conf.Init()
 	mysql.Start()
+	//test.Test()
 }
