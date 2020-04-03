@@ -1,11 +1,11 @@
 package main
 
-import "scarletpot/protocal/mysql"
+import "scarletpot/protocal/ssh"
 
 func main() {
 	// 引导安装/初始化
 	//install.Install()
 	//conf.Init()
-	mysql.Start()
+	ssh.Start()
 	//test.Test()
 }
