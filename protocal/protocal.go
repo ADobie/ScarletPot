@@ -1,5 +1,0 @@
-package protocal
-
-func Run() {
-
-}
