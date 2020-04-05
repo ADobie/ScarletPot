@@ -42,5 +42,6 @@ require (
 	github.com/yosssi/gohtml v0.0.0-20190915184251-7ff6f235ecaf // indirect
 	golang.org/x/crypto v0.0.0-20191205180655-e7c4368fe9dd
 	golang.org/x/text v0.3.2 // indirect
+	gopkg.in/gookit/color.v1 v1.1.6
 	gopkg.in/yaml.v2 v2.2.8 // indirect
 )

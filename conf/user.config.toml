@@ -6,7 +6,7 @@
 
 [database]
   dbType = "mysql"
-  dbHost = "localhost:3306"
+  dbHost = "localhost"
   dbUser = "root"
   dbPass = "root"
   dbName = "scarlet_pot"

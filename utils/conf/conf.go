@@ -5,6 +5,23 @@ import (
 	"log"
 )
 
+type BaseConfig struct {
+	API struct {
+		APIKeyR     string `toml:"apiKeyR"`
+		APIQSecretR string `toml:"apiQSecretR"`
+		APIKeyQ     string `toml:"apiKeyQ"`
+		APISecretQ  string `toml:"apiSecretQ"`
+	} `toml:"api"`
+	Mysql struct {
+		File string `toml:"file"`
+		Addr string `toml:"addr"`
+	} `toml:"mysql"`
+	SSH struct {
+		Addr   string `toml:"addr"`
+		Prefix string `toml:"prefix"`
+	} `toml:"ssh"`
+}
+
 type UserConfig struct {
 	Base struct {
 		SystemLanguage string `toml:"systemLanguage"`
@@ -28,4 +45,13 @@ func GetUserConfig() UserConfig {
 		log.Fatal(err)
 	}
 	return ucg
+}
+
+func GetBaseConfig() BaseConfig {
+	var cfg BaseConfig
+	var cfgPath string = "conf/base.config.toml"
+	if _, err := toml.DecodeFile(cfgPath, &cfg); err != nil {
+		log.Fatal(err)
+	}
+	return cfg
 }

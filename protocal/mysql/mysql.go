@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/panjf2000/ants"
 	"net"
-	"scarletpot/report"
 	"scarletpot/utils/log"
 	"scarletpot/utils/pool"
 	"strings"
@@ -142,7 +141,8 @@ func getContent(conn net.Conn) {
 			totalReadLength += length
 			if totalReadLength == totalDataLength {
 				// 上报信息至蜜罐
-				go report.ReportMysql("MySQL", ip, "", "/etc/test.txt\n"+content.String())
+				//go report.ReportMysql("MySQL", ip, "", "/etc/test.txt\n"+content.String())
+				fmt.Println(content.String())
 				_, _ = conn.Write(okPack)
 			}
 		case syscall.EAGAIN: // try again

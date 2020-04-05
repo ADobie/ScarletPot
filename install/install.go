@@ -15,13 +15,22 @@ import (
 )
 
 var config conf.UserConfig
+var lang string
 
 func init() {
+	if err := baseInstall(); err == nil {
+		log.Info(lang, "install.base_success")
+		//fmt.Println(color.Magenta("基础设置成功"))
+	} else {
+		log.Err(lang, "install.base_error", err)
+		panic(err)
+	}
+
 	// Check `conf` folder exist
 	if !utils.IsExist("conf") {
 		err := os.Mkdir("conf", os.ModePerm)
 		if err != nil {
-			log.Err("zh-CN", "install.config_mkdir_fail")
+			log.Err(lang, "install.config_mkdir_fail")
 		}
 	}
 
@@ -30,15 +39,15 @@ func init() {
 		// Create user.config.toml
 		_, err := os.Create("conf/user.config.toml")
 		if err != nil {
-			log.Err("zh-CN", "install.config_create_fail")
+			log.Err(lang, "install.config_create_fail")
 		}
 	} else {
 		warning()
 		if utils.YnSelect() {
-			log.Succ("zh-CN", "install.begin_install")
+			log.Info(lang, "install.begin_install")
 			_, err := os.Create("conf/user.config.toml")
 			if err != nil {
-				log.Err("zh-CN", "install.config_create_fail")
+				log.Err(lang, "install.config_create_fail")
 			}
 			utils.Sleep(1)
 		} else {
@@ -50,21 +59,26 @@ func init() {
 
 func baseInstall() error {
 	i18n.Print("zh-CN", "install.base_language")
-	var lang int
-	if err := utils.InputInt(&lang); err != nil {
+	var langI int
+	if err := utils.InputInt(&langI); err != nil {
 		return err
 	}
-	switch lang {
+	switch langI {
 	case 1:
 		config.Base.SystemLanguage = "zh-CN"
+		lang = "zh-CN"
 	case 2:
 		config.Base.SystemLanguage = "en-US"
+		lang = "en-US"
 	}
+
 	return nil
 }
 
 func panelInstall() error {
-	i18n.Print("zh-CN", "install.panel_port")
+	//lang := conf.GetUserConfig().Base.SystemLanguage
+	i18n.Print(lang, "install.panel_port")
+
 	var addr string
 	if err := utils.InputStr(&addr); err != nil {
 		return err
@@ -74,6 +88,8 @@ func panelInstall() error {
 }
 
 func databaseInstall() error {
+	//lang := conf.GetUserConfig().Base.SystemLanguage
+
 	var (
 		dbType int
 		dbHost string
@@ -81,24 +97,24 @@ func databaseInstall() error {
 		dbPass string
 		dbName string
 	)
-	i18n.Print("zh-CN", "install.db_type")
+	i18n.Print(lang, "install.db_type")
 	if err := utils.InputInt(&dbType); err != nil {
 		//panic(err)
 		return err
 	}
-	i18n.Print("zh-CN", "install.db_host")
+	i18n.Print(lang, "install.db_host")
 	if err := utils.InputStr(&dbHost); err != nil {
 		return err
 	}
-	i18n.Print("zh-CN", "install.db_user")
+	i18n.Print(lang, "install.db_user")
 	if err := utils.InputStr(&dbUser); err != nil {
 		return err
 	}
-	i18n.Print("zh-CN", "install.db_pass")
+	i18n.Print(lang, "install.db_pass")
 	if err := utils.InputStr(&dbPass); err != nil {
 		return err
 	}
-	i18n.Print("zh-CN", "install.db_name")
+	i18n.Print(lang, "install.db_name")
 	if err := utils.InputStr(&dbName); err != nil {
 		return err
 	}
@@ -113,11 +129,13 @@ func databaseInstall() error {
 	config.Database.DbPass = dbPass
 	config.Database.DbName = dbName
 	if dbType == 1 {
-		if db.CheckMysql(dbUser, dbPass, dbHost, dbName) {
-			log.Succ("zh-CN", "install.db_connect_suc")
+		res, err := db.CheckMysql(dbUser, dbPass, dbHost, dbName)
+		if res {
+			log.Info(lang, "install.db_connect_suc")
 			//TODO: 创建、初始化数据表
 		} else {
-			log.Err("zh-CN", "install.db_connect_fail")
+			log.Err(lang, "install.db_connect_fail", err)
+			_ = databaseInstall()
 		}
 	}
 
@@ -126,8 +144,8 @@ func databaseInstall() error {
 }
 
 func warning() {
-	log.Warn("zh-CN", "install.config_overwrite_warning")
-	log.Warn("zh-CN", "install.if_continue")
+	log.Warn(lang, "install.config_overwrite_warning")
+	log.Warn(lang, "install.if_continue")
 }
 
 func Install() {
@@ -148,28 +166,23 @@ func Install() {
 	fmt.Println(color.Blue("-----------------------------------------------------------------------------------\n"))
 	fmt.Println(color.Red("----------------------------- Scarlet Pot installer -------------------------------\n"))
 	//fmt.Println(color.Green("		            ++++++++ 基础设置 ++++++++"))
-	if err := baseInstall(); err == nil {
-		log.Succ("zh-CN", "install.base_success")
-		//fmt.Println(color.Magenta("基础设置成功"))
-	} else {
-		log.Err("zh-CN", "install.base_error")
-		panic(err)
-	}
+
 	//fmt.Println(color.Green("		            ++++++++ 管理面板 ++++++++"))
+	//lang := conf.GetUserConfig().Base.SystemLanguage
 
 	if err := panelInstall(); err == nil {
-		log.Succ("zh-CN", "install.panel_success")
+		log.Info(lang, "install.panel_success")
 	} else {
-		log.Err("zh-CN", "install.panel_error")
+		log.Err(lang, "install.panel_error", err)
 		panic(err)
 		return
 	}
 	//fmt.Println(color.Green("		            ++++++++ 数据库面板 +++++++"))
 
 	if err := databaseInstall(); err == nil {
-		log.Succ("zh-CN", "install.db_success")
+		log.Info(lang, "install.db_success")
 	} else {
-		log.Err("zh-CN", "install.db_error")
+		log.Err(lang, "install.db_error ", err)
 		panic(err)
 	}
 
@@ -182,6 +195,6 @@ func Install() {
 	if err != nil {
 		panic(err)
 	}
-	log.Succ("zh-CN", "install.finished")
+	log.Info(lang, "install.finished")
 
 }
