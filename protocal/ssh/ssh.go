@@ -40,7 +40,7 @@ func Start() {
 			}
 			output := getResultFromApi(line).Output
 			fmt.Println(line)
-			//// 上报ssh蜜罐信息
+			// 上报ssh蜜罐信息
 			//report.ReportSSH("SSH", s.RemoteAddr().String(), "", line)
 			_, err := io.WriteString(s, output)
 			if err != nil {

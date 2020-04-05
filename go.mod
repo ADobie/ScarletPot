@@ -10,6 +10,7 @@ require (
 	github.com/aws/aws-sdk-go v1.29.34 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/disintegration/imaging v1.6.2 // indirect
+	github.com/elazarl/goproxy v0.0.0-20200315184450-1f3cb6622dad
 	github.com/fatih/color v1.9.0 // indirect
 	github.com/flynn/go-shlex v0.0.0-20150515145356-3f9db97f8568 // indirect
 	github.com/gliderlabs/ssh v0.3.0

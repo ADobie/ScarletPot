@@ -20,6 +20,10 @@ type BaseConfig struct {
 		Addr   string `toml:"addr"`
 		Prefix string `toml:"prefix"`
 	} `toml:"ssh"`
+	Http struct {
+		Addr string `toml:"addr"`
+		Msg  string `toml:"msg"`
+	} `toml:"http"`
 }
 
 type UserConfig struct {
