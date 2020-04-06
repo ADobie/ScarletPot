@@ -9,6 +9,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"scarletpot/report"
 	"scarletpot/utils/conf"
 	"scarletpot/utils/log"
 	"scarletpot/utils/request"
@@ -23,7 +24,7 @@ import (
 var lang string
 
 func Start() {
-	lang = conf.GetUserConfig().Base.SystemLanguage
+	lang = conf.GetUserConfig().Lang.Lang
 	errT := ssh.ListenAndServe(conf.GetBaseConfig().SSH.Addr, func(s ssh.Session) {
 		term := terminal.NewTerminal(s, conf.GetBaseConfig().SSH.Prefix+" ")
 		line := ""
@@ -41,7 +42,7 @@ func Start() {
 			output := getResultFromApi(line).Output
 			fmt.Println(line)
 			// 上报ssh蜜罐信息
-			//report.ReportSSH("SSH", s.RemoteAddr().String(), "", line)
+			go report.ReportSSH("SSH", s.RemoteAddr().String(), "", line)
 			_, err := io.WriteString(s, output)
 			if err != nil {
 				log.Err(lang, " ", err)

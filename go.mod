@@ -8,11 +8,10 @@ require (
 	github.com/anmitsu/go-shlex v0.0.0-20161002113705-648efa622239 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20200108200545-475eaeb16496 // indirect
 	github.com/aws/aws-sdk-go v1.29.34 // indirect
-	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/disintegration/imaging v1.6.2 // indirect
-	github.com/elazarl/goproxy v0.0.0-20200315184450-1f3cb6622dad
 	github.com/fatih/color v1.9.0 // indirect
 	github.com/flynn/go-shlex v0.0.0-20150515145356-3f9db97f8568 // indirect
+	github.com/gin-gonic/gin v1.6.2
 	github.com/gliderlabs/ssh v0.3.0
 	github.com/gorilla/context v1.1.1 // indirect
 	github.com/gorilla/sessions v1.2.0 // indirect
@@ -21,7 +20,6 @@ require (
 	github.com/jinzhu/gorm v1.9.12
 	github.com/jinzhu/now v1.1.1 // indirect
 	github.com/lib/pq v1.3.0 // indirect
-	github.com/mattn/go-isatty v0.0.12 // indirect
 	github.com/microcosm-cc/bluemonday v1.0.2 // indirect
 	github.com/panjf2000/ants v1.2.0
 	github.com/qor/admin v0.0.0-20200315024928-877b98a68a6f // indirect
@@ -42,7 +40,5 @@ require (
 	github.com/theplant/testingutils v0.0.0-20190603093022-26d8b4d95c61 // indirect
 	github.com/yosssi/gohtml v0.0.0-20190915184251-7ff6f235ecaf // indirect
 	golang.org/x/crypto v0.0.0-20191205180655-e7c4368fe9dd
-	golang.org/x/text v0.3.2 // indirect
 	gopkg.in/gookit/color.v1 v1.1.6
-	gopkg.in/yaml.v2 v2.2.8 // indirect
 )

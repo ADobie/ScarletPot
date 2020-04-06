@@ -27,8 +27,8 @@ type BaseConfig struct {
 }
 
 type UserConfig struct {
-	Base struct {
-		SystemLanguage string `toml:"systemLanguage"`
+	Lang struct {
+		Lang string `toml:"lang"`
 	} `toml:"base"`
 	Panel struct {
 		PanelAddr string `toml:"panelAddr"`

@@ -1,4 +1,4 @@
-[base]
+[lang]
   systemLanguage = "zh-CN"
 
 [panel]
@@ -6,7 +6,7 @@
 
 [database]
   dbType = "mysql"
-  dbHost = "localhost"
+  dbHost = "localhost:33060"
   dbUser = "root"
   dbPass = "root"
-  dbName = "scarlet_pot"
+  dbName = "test"
