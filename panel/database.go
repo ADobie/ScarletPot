@@ -10,7 +10,7 @@ import (
 
 /*
 +----------------------+
-| 		数据库结构	   |
+| 		蜜罐数据库结构   |
 +----------------------+
 | sp_admin             |
 | sp_info              |
@@ -32,14 +32,12 @@ sp_admin 表结构
 +-----------+--------------+------+-----+---------+----------------+
 */
 type SpAdmin struct {
-	gorm.Model
-
 	ID        uint      `gorm:"primary_key;AUTO_INCREMENT"`
 	Name      string    `gorm:"column:name;type:varchar(255)"`
 	Pass      string    `gorm:"column:pass;type:varchar(255)"`
 	Token     string    `gorm:"column:token;type:varchar(255)"`
-	LastLogin time.Time `gorm:"column:lastLogin;type:datetime"`
-	LastIP    string    `gorm:"column:lastIp;type:varchar(255)"`
+	LastLogin time.Time `gorm:"column:last_login;type:datetime"`
+	LastIP    string    `gorm:"column:last_ip;type:varchar(255)"`
 	CreatedAt time.Time
 }
 
@@ -62,11 +60,11 @@ type SpInfo struct {
 	//gorm.Model
 	ID          uint   `gorm:"primary_key;AUTO_INCREMENT"`
 	Type        string `json:"type" gorm:"column:type;type:varchar(255)"`
-	WebApp      string `json:"webApp" gorm:"column:webApp;type:varchar(255)"`
+	WebApp      string `json:"webApp" gorm:"column:web_app;type:varchar(255)"`
 	Info        string `json:"detail" gorm:"column:info;type:text"`
-	AttackIP    string `json:"attackIp" gorm:"column:attackIp;type:varchar(255)"`
-	ClientIP    string `gorm:"column:clientIp;type:varchar(255)"`
-	AccessToken string `json:"accessToken" gorm:"column:accessToken;type:varchar(255)"`
+	AttackIP    string `json:"attackIp" gorm:"column:attack_ip;type:varchar(255)"`
+	ClientIP    string `gorm:"column:client_ip;type:varchar(255)"`
+	AccessToken string `json:"accessToken" gorm:"column:access_token;type:varchar(255)"`
 	CreatedAt   time.Time
 }
 
@@ -84,14 +82,12 @@ type SpInfo struct {
 */
 
 type SpUser struct {
-	gorm.Model
-
 	ID        uint      `gorm:"primary_key;AUTO_INCREMENT"`
 	Username  string    `gorm:"column:username;type:varchar(255)"`
 	Password  string    `gorm:"column:password;type:varchar(255)"`
-	APIKey    string    `gorm:"column:apiKey;type:varchar(255)"`
-	APISecret string    `gorm:"column:apiSecret;type:varchar(255)"`
-	LastLogin time.Time `gorm:"column:lastLogin;type:datetime"`
+	APIId     string    `gorm:"column:api_id;type:varchar(255)"`
+	APISecret string    `gorm:"column:api_secret;type:varchar(255)"`
+	LastLogin time.Time `gorm:"column:last_login;type:datetime"`
 	CreatedAt time.Time
 }
 

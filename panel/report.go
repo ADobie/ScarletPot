@@ -6,13 +6,11 @@ import (
 )
 
 // TODO: 处理蜜罐上报信息 并存入数据库
-
-func (s *Service) reportHandler(c *gin.Context) {
+func (s *Service) reportHandler(c *gin.Context) (int, interface{}) {
 	var data SpInfo
 	err := c.BindJSON(&data)
 	if err != nil {
-		c.JSON(400, gin.H{"errcode": 400, "description": "Post Data Err"})
-		return
+		return s.errJSON(500, 10000, "JSON解析失败")
 	}
 	fmt.Println("type: " + data.Type + " attackIp: " + data.AttackIP + " info: " + data.Info)
 
@@ -25,4 +23,5 @@ func (s *Service) reportHandler(c *gin.Context) {
 		Info:        data.Info,
 	}
 	s.Mysql.Create(&spInfos)
+	return s.successJSON("上报成功")
 }

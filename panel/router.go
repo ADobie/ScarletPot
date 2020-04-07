@@ -2,25 +2,22 @@ package panel
 
 import (
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 func (s *Service) initRouter() *gin.Engine {
 	r := gin.Default()
 	r.GET("/", func(c *gin.Context) {
-		c.String(http.StatusOK, "Nothing here")
+		c.JSON(s.successJSON("Scarlet Pot"))
+
 	})
 	r.POST("/api/report", func(c *gin.Context) {
-		s.reportHandler(c)
+		c.JSON(s.reportHandler(c))
 	})
-	//
-	//r.POST("/scannerStart", func(c *gin.Context) {
-	//
-	//})
-	//
-	//r.GET("/getLastTime", func(c *gin.Context) {
-	//
-	//})
 
+	r.POST("/api/token/gen", func(c *gin.Context) {
+		c.JSON(s.genApiToken(c))
+	})
+
+	r.GET("/api/token/sec")
 	return r
 }

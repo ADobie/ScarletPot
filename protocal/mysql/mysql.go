@@ -42,7 +42,6 @@ var fileNames []string
 var filename string
 
 func Start() {
-	// 开启协程池 每次处理10个协程
 	wg, poolX = pool.New(10)
 	defer poolX.Release()
 
