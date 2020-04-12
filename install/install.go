@@ -65,10 +65,10 @@ func baseInstall() error {
 	}
 	switch langI {
 	case 1:
-		config.Base.SystemLanguage = "zh-CN"
+		config.Lang.Lang = "zh-CN"
 		lang = "zh-CN"
 	case 2:
-		config.Base.SystemLanguage = "en-US"
+		config.Lang.Lang = "en-US"
 		lang = "en-US"
 	}
 

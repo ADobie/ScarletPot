@@ -13,3 +13,6 @@ prefix = "[root@ubuntu ~]#"
 [http]
 addr = "0.0.0.0:8081"
 msg = "Hello world!"
+
+[redis]
+addr = "0.0.0.0:6379"

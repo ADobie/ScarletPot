@@ -1,5 +1,5 @@
-[lang]
-  systemLanguage = "zh-CN"
+[base]
+  lang = "zh-CN"
 
 [panel]
   panelAddr = "0.0.0.0:9000"

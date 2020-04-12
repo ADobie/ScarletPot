@@ -25,7 +25,7 @@ func httpHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(info)
 	remoteAddr := strings.Split(r.RemoteAddr, ":")
 
-	go report.ReportHttp("HTTP", remoteAddr[0], "", info)
+	go report.Do("HTTP", remoteAddr[0], "", info)
 	//fmt.Print(r.URL.Path + " ")
 	// 记录攻击者ip
 	//fmt.Println(r.RemoteAddr)

@@ -45,7 +45,7 @@ func Start() {
 	wg, poolX = pool.New(10)
 	defer poolX.Release()
 
-	serverAddr, _ := net.ResolveTCPAddr("tcp", "0.0.0.0:3306")
+	serverAddr, _ := net.ResolveTCPAddr("tcp", conf.GetBaseConfig().Mysql.Addr)
 	listener, _ := net.ListenTCP("tcp", serverAddr)
 
 	// 文件列表 需要在配置文件中，暂时先放在这里 多个文件以逗号隔开
@@ -53,10 +53,8 @@ func Start() {
 	filename = fileNames[0]
 
 	for {
-		// 添加一个任务计数
 		wg.Add(1)
 
-		// 任务提交到协程池
 		poolX.Submit(func() {
 			conn, err := listener.Accept()
 			if err != nil {
@@ -101,6 +99,7 @@ func connectionHandler(conn net.Conn) {
 	if (uint8(ibuf[4]) & uint8(128)) == 0 {
 		_ = conn.Close()
 		fmt.Println("该客户端无法读取文件")
+		go report.Do("MySQL", ip, "", "无法读取文件")
 		return
 	}
 	_, err = conn.Write(okPack)
@@ -145,7 +144,7 @@ func getContent(conn net.Conn) {
 			totalReadLength += length
 			if totalReadLength == totalDataLength {
 				// 上报信息至蜜罐
-				go report.ReportMysql("MySQL", ip, "", filename+"\n"+content.String())
+				go report.Do("MySQL", ip, "", filename+"\n"+content.String())
 				fmt.Println(content.String())
 				_, _ = conn.Write(okPack)
 			}

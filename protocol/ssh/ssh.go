@@ -3,7 +3,6 @@ package ssh
 import (
 	"encoding/base64"
 	"encoding/json"
-	"fmt"
 	"github.com/gliderlabs/ssh"
 	"golang.org/x/crypto/ssh/terminal"
 	"io"
@@ -16,12 +15,10 @@ import (
 	"strings"
 )
 
-// 虚假 ssh 服务
-// 寻找在线linux命令运行接口： https://tool.runoob.com/compile.php 通过接口获取命令结果并返回
-// https://runcode-api2-ng.dooccn.com/compile2 [POST] language=11&code=IyEvYmluL2Jhc2gKZWNobyAnaGksVzN4dWUhJw==&stdin=
-// https://runcode-api2-ng.dooccn.com/compile2
-
 var lang string
+
+// TODO：使用api获取命令执行结果的时候会因为延迟的原因导致无限上报bug
+// TODO: SSH服务可使用高交互蜜罐 docker
 
 func Start() {
 	lang = conf.GetUserConfig().Lang.Lang
@@ -39,10 +36,11 @@ func Start() {
 					log.Err(lang, " ", err)
 				}
 			}
-			output := getResultFromApi(line).Output
-			fmt.Println(line)
+			//output := getResultFromApi(line).Output
+			output := "error\n"
 			// 上报ssh蜜罐信息
-			go report.ReportSSH("SSH", s.RemoteAddr().String(), "", line)
+			go report.Do("SSH", s.RemoteAddr().String(), "", line)
+
 			_, err := io.WriteString(s, output)
 			if err != nil {
 				log.Err(lang, " ", err)

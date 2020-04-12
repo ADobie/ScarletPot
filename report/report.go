@@ -2,6 +2,7 @@ package report
 
 import (
 	"encoding/json"
+	"fmt"
 	"scarletpot/utils/log"
 	"scarletpot/utils/request"
 )
@@ -13,6 +14,14 @@ type Info struct {
 	Type        string `json:"type"`
 	WebApp      string `json:"webApp"`
 	Detail      string `json:"detail"`
+}
+
+// 平台回应结果结构
+
+type RetMsg struct {
+	Data  string `json:"data"`
+	Error string `json:"error"`
+	Msg   string `json:"msg"`
 }
 
 var a string
@@ -35,32 +44,19 @@ func buildJson(atype string, attackIP string, webApp string, detail string) []by
 	return attackInfo
 }
 
-func ReportMysql(atype string, attackIP string, webApp string, detail string) {
+// 只需负责上报数据，具体是插入还是更新 由panel来负责
+func Do(atype string, attackIP string, webApp string, detail string) {
 	info := buildJson(atype, attackIP, webApp, detail)
-	//fmt.Println(string(info))
-	_, err := request.PostJson(apiUrl, info)
+	fmt.Println(string(info))
+	resp, err := request.PostJson(apiUrl, info)
+	defer resp.Body.Close()
 	if err != nil {
-		log.Err("zh-CN", "与远程服务器断开连接")
+		log.Err("zh-CN", "与远程上报服务器断开连接")
+		// TODO 后期做尝试断线重连
 		panic(err)
 	}
 }
 
-func ReportSSH(atype string, attackIP string, webApp string, detail string) {
-	info := buildJson(atype, attackIP, webApp, detail)
-	//fmt.Println(string(info))
-	_, err := request.PostJson(apiUrl, info)
-	if err != nil {
-		log.Err("zh-CN", "与远程服务器断开连接")
-		panic(err)
-	}
-}
-
-func ReportHttp(atype string, attackIP string, webApp string, detail string) {
-	info := buildJson(atype, attackIP, webApp, detail)
-	//fmt.Println(string(info))
-	_, err := request.PostJson(apiUrl, info)
-	if err != nil {
-		log.Err("zh-CN", "与远程服务器断开连接")
-		panic(err)
-	}
-}
+//func UpdateDo(atype string, attackIP string, webApp string, detail string) string {
+//
+//}
