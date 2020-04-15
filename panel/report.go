@@ -21,6 +21,7 @@ func (s *Service) reportHandler(c *gin.Context) (int, interface{}) {
 		Type:        data.Type,
 		WebApp:      data.WebApp,
 		Info:        data.Info,
+		Count:       1,
 	}
 
 	if s.checkIfExist(data.AttackIP, data.Type, data.AccessToken) {
@@ -51,6 +52,8 @@ func (s *Service) updateInfo(info SpInfo) {
 	var oldInfo SpInfo
 	// 旧数据拼接
 	s.Mysql.Where(map[string]interface{}{"attack_ip": info.AttackIP, "type": info.Type}).Find(&oldInfo)
-
 	s.Mysql.Model(&info).Where("attack_ip = ? AND type = ?", info.AttackIP, info.Type).Update("info", oldInfo.Info+"^^"+info.Info)
+	// 更新攻击次数
+	s.Mysql.Model(&info).Where("attack_ip = ? AND type = ?", info.AttackIP, info.Type).Update("count", oldInfo.Count+1)
+
 }

@@ -7,9 +7,9 @@ import (
 
 // 封装日志 标准输出 + 日志文件写入
 // TODO: 日志写入文件
-func Err(lang string, info string, err ...error) {
+func Err(lang string, info string, err ...interface{}) {
 	if err != nil {
-		color.Error.Println(i18n.I18nStr(lang, info), err)
+		color.Red.Println(i18n.I18nStr(lang, info), err)
 		return
 	}
 	color.Red.Println(i18n.I18nStr(lang, info))

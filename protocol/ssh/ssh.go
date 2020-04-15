@@ -24,6 +24,9 @@ func Start() {
 	lang = conf.GetUserConfig().Lang.Lang
 	errT := ssh.ListenAndServe(conf.GetBaseConfig().SSH.Addr, func(s ssh.Session) {
 		term := terminal.NewTerminal(s, conf.GetBaseConfig().SSH.Prefix+" ")
+		arr := strings.Split(s.RemoteAddr().String(), ":")
+		report.Do("SSH", arr[0], "", "建立链接")
+
 		line := ""
 		for {
 			line, _ = term.ReadLine()
@@ -38,8 +41,9 @@ func Start() {
 			}
 			//output := getResultFromApi(line).Output
 			output := "error\n"
+
 			// 上报ssh蜜罐信息
-			go report.Do("SSH", s.RemoteAddr().String(), "", line)
+			go report.Do("SSH", arr[0], "", line)
 
 			_, err := io.WriteString(s, output)
 			if err != nil {

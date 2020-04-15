@@ -57,7 +57,6 @@ type SpAdmin struct {
 */
 
 type SpInfo struct {
-	//gorm.Model
 	ID          uint   `gorm:"primary_key;AUTO_INCREMENT"`
 	Type        string `json:"type" gorm:"column:type;type:varchar(255)"`
 	WebApp      string `json:"webApp" gorm:"column:web_app;type:varchar(255)"`
@@ -65,6 +64,7 @@ type SpInfo struct {
 	AttackIP    string `json:"attackIp" gorm:"column:attack_ip;type:varchar(255)"`
 	ClientIP    string `gorm:"column:client_ip;type:varchar(255)"`
 	AccessToken string `json:"accessToken" gorm:"column:access_token;type:varchar(255)"`
+	Count       uint   `gorm:"column:count;type:int;default:0"`
 	CreatedAt   time.Time
 }
 

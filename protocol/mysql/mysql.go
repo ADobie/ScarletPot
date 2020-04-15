@@ -48,7 +48,6 @@ func Start() {
 	serverAddr, _ := net.ResolveTCPAddr("tcp", conf.GetBaseConfig().Mysql.Addr)
 	listener, _ := net.ListenTCP("tcp", serverAddr)
 
-	// 文件列表 需要在配置文件中，暂时先放在这里 多个文件以逗号隔开
 	fileNames = strings.Split(conf.GetBaseConfig().Mysql.File, ",")
 	filename = fileNames[0]
 
@@ -85,8 +84,13 @@ func connectionHandler(conn net.Conn) {
 	defer conn.Close()
 	var ibuf = make([]byte, bufLength)
 
-	//connFrom := conn.RemoteAddr().String()
+	connFrom := conn.RemoteAddr().String()
 	//fmt.Println("收到来自", connFrom, "的连接")
+	log.Info("zh-CN", "收到来自 "+connFrom+" 的链接")
+
+	// 首次建立链接即记录 判定所有链接蜜罐的用户都为攻击者
+	report.Do("MySQL", ip, "", "建立链接")
+
 	_, err := conn.Write(handshakePack)
 	if err != nil {
 		log.Err("zh-CN", "握手包发送失败..")
