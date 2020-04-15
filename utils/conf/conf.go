@@ -24,6 +24,9 @@ type BaseConfig struct {
 		Addr string `toml:"addr"`
 		Msg  string `toml:"msg"`
 	} `toml:"http"`
+	Web struct {
+		Jsonp string `toml:"jsonp"`
+	} `toml:"web"`
 }
 
 type UserConfig struct {

@@ -16,44 +16,12 @@
 
 # 项目结构
 
-```ini
-├── ./README.md
-├── ./conf
-│   └── ./conf/config.ini
-├── ./db
-│   ├── ./db/mysql
-│   │   ├── ./db/mysql/honey.sql
-│   │   └── ./db/mysql/mysql.go
-│   └── ./db/sqlite
-│       ├── ./db/sqlite/honey.db
-│       └── ./db/sqlite/sqlite.go
-├── ./go.mod
-├── ./init
-│   └── ./init/init.go
-├── ./logs
-├── ./main.go
-├── ./router
-│   └── ./router/router.go
-├── ./services
-│   ├── ./services/elasticsearch
-│   ├── ./services/ftp
-│   ├── ./services/memcache
-│   ├── ./services/mysql
-│   ├── ./services/redis
-│   ├── ./services/ssh
-│   ├── ./services/telnet
-│   └── ./services/web
-├── ./utils
-│   ├── ./utils/cache
-│   │   └── ./utils/cache/cache.go
-│   └── ./utils/log
-└── ./web
-    ├── ./web/thinkphp
-    ├── ./web/typecho
-    └── ./web/wordpress
-```
 
 
+# 模块说明
+## Web钓鱼
+### jsonp劫持：
+> 攻击者 -> 钓鱼页面 -> 获取用户信息 -> 前端请求蜜罐返回用户数据
 
 # 说明
 

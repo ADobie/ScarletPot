@@ -16,3 +16,6 @@ msg = "Hello world!"
 
 [redis]
 addr = "0.0.0.0:6379"
+
+[web]
+jsonp = "0.0.0.0:9001"
