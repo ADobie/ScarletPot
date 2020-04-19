@@ -3,6 +3,7 @@ package report
 import (
 	"encoding/json"
 	"fmt"
+	"scarletpot/utils/conf"
 	"scarletpot/utils/log"
 	"scarletpot/utils/request"
 )
@@ -17,16 +18,13 @@ type Info struct {
 }
 
 // 平台回应结果结构
-
 type RetMsg struct {
 	Data  string `json:"data"`
 	Error string `json:"error"`
 	Msg   string `json:"msg"`
 }
 
-var a string
-
-const apiUrl = "http://localhost:9000/api/report"
+var apiUrl = "http://" + conf.GetUserConfig().Panel.PanelAddr + "/api/report"
 
 func buildJson(atype string, attackIP string, webApp string, detail string) []byte {
 	info := Info{
@@ -56,7 +54,3 @@ func Do(atype string, attackIP string, webApp string, detail string) {
 		panic(err)
 	}
 }
-
-//func UpdateDo(atype string, attackIP string, webApp string, detail string) string {
-//
-//}

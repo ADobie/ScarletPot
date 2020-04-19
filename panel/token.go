@@ -14,6 +14,7 @@ import (
 
 // 获取用户jwt-token 通过decode jwt-token 使用其中的 username 和 userToken 来生成apiID
 // 开发测试环境先直接获取用户发送的username 和 userToken 来生成,但是会有被抓包修改的安全风险，所以后期采用jwtToken传输信息
+
 // 在生成api秘钥之前 首先需要验证用户传输的username 和 userToken 是否匹配
 type GenMsg struct {
 	Timestamp int64  `json:"timestamp"`

@@ -1,9 +1,11 @@
+# 蜜罐服务配置
+
 [api]
 apiKeyR = ""                                    # 蜜罐信息apiKey
 apiQSecretR = ""                                # 蜜罐信息apiSec (通过 apikeyX 和apiSecretX 可通过接口获取 AccessToken)
 
 [mysql]
-file = "/etc/hosts,/etc/hosts,/etc/issue"        # 上钩后获取的攻击者信息
+file = "/etc/passwd"        # 上钩后获取的攻击者信息
 addr = "0.0.0.0:3306"
 
 [ssh]
@@ -11,11 +13,11 @@ addr = "0.0.0.0:22"
 prefix = "[root@ubuntu ~]#"
 
 [http]
-addr = "0.0.0.0:8081"
+addr = "0.0.0.0:8080"
 msg = "Hello world!"
 
 [redis]
-addr = "0.0.0.0:6379"
+addr = "0.0.0.0:63790"
 
 [web]
-jsonp = "0.0.0.0:9001"
+jsonp = "0.0.0.0:8888"

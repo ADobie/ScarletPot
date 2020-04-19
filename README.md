@@ -3,7 +3,84 @@
 本项目为Scarletwaf 核心功能之一，目的是保护站点免受恶意攻击同时引诱攻击者进入蜜罐，收集攻击者信息与攻击手法，并及时向网站管理员发送预警。
 
 
+# 使用说明
 
+帮助界面
+```bash
+$ ./scarletpot help   
+
+
+███████╗  ██████╗  █████╗  ██████╗  ██╗     ███████╗ ████████╗   ██████╗  ██████╗ ████████╗
+██╔════╝ ██╔════╝ ██╔══██╗ ██╔══██╗ ██║     ██╔════╝ ╚══██╔══╝   ██╔══██╗██╔═══██╗╚══██╔══╝
+███████╗ ██║      ███████║ ██████╔╝ ██║     █████╗      ██║  *** ██████╔╝██║   ██║   ██║   
+╚════██║ ██║      ██╔══██║ ██╔══██╗ ██║     ██╔══╝      ██║  *** ██╔═══╝ ██║   ██║   ██║   
+███████║ ╚██████╗ ██║  ██║ ██║  ██║ ███████╗███████╗    ██║  *** ██║     ╚██████╔╝   ██║   
+╚══════╝  ╚═════╝ ╚═╝  ╚═╝ ╚═╝  ╚═╝ ╚══════╝╚══════╝    ╚═╝  *** ╚═╝      ╚═════╝    ╚═╝
+
+   run           Start all scarlet service
+   install       Start install program
+   version       Show scarletPot Version
+   help          Show help
+
+```
+
+版本号
+```bash
+$ ./scarletpot version
+ScarletPot v0.1 2020.4.19
+By Annevi
+```
+
+初始化安装
+```bash
+$ ./scarletpot install
+
+
+███████╗  ██████╗  █████╗  ██████╗  ██╗     ███████╗ ████████╗   ██████╗  ██████╗ ████████╗
+██╔════╝ ██╔════╝ ██╔══██╗ ██╔══██╗ ██║     ██╔════╝ ╚══██╔══╝   ██╔══██╗██╔═══██╗╚══██╔══╝
+███████╗ ██║      ███████║ ██████╔╝ ██║     █████╗      ██║  *** ██████╔╝██║   ██║   ██║   
+╚════██║ ██║      ██╔══██║ ██╔══██╗ ██║     ██╔══╝      ██║  *** ██╔═══╝ ██║   ██║   ██║   
+███████║ ╚██████╗ ██║  ██║ ██║  ██║ ███████╗███████╗    ██║  *** ██║     ╚██████╔╝   ██║   
+╚══════╝  ╚═════╝ ╚═╝  ╚═╝ ╚═╝  ╚═╝ ╚══════╝╚══════╝    ╚═╝  *** ╚═╝      ╚═════╝    ╚═╝
+
+------------------------------------- ABOUT ---------------------------------------
+|                 author: Annevi                                                  |
+|                 github: https://github.com/ScarletWaf/ScarletPot                |
+-----------------------------------------------------------------------------------
+
+----------------------------- Scarlet Pot installer -------------------------------
+
+请选择基础语言 (1. zh-CN 2. en-US): 
+....
+```
+
+启动服务
+```bash
+$ ./scarletpot run 
+     
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:   export GIN_MODE=release
+ - using code:  gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] GET    /                         --> scarletpot/protocol/web.initJsonp.func1 (3 handlers)
+[GIN-debug] POST   /api/a                    --> scarletpot/protocol/web.initJsonp.func2 (3 handlers)
+[GIN-debug] Listening and serving HTTP on 0.0.0.0:8888
+[INFO] Redis listening 0.0.0.0:63790
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:   export GIN_MODE=release
+ - using code:  gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] GET    /                         --> scarletpot/panel.(*Service).initRouter.func1 (3 handlers)
+[GIN-debug] POST   /api/report               --> scarletpot/panel.(*Service).initRouter.func2 (3 handlers)
+[GIN-debug] POST   /api/token/gen            --> scarletpot/panel.(*Service).initRouter.func3 (3 handlers)
+[GIN-debug] GET    /api/token/sec            --> github.com/gin-gonic/gin.RecoveryWithWriter.func1 (2 handlers)
+[GIN-debug] Listening and serving HTTP on 0.0.0.0:9000
+
+```
 # 基础架构
 
 ![image-20200329195610564](http://pic.lwh.red/image-20200329195610564.png)

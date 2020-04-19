@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"net"
 	"scarletpot/report"
+	"scarletpot/utils/conf"
 	"scarletpot/utils/log"
 	"scarletpot/utils/pool"
 	"strconv"
@@ -16,9 +17,13 @@ var ip string
 
 func Start() {
 	redData = make(map[string]string)
-
 	//建立socket，监听端口
-	netListen, _ := net.Listen("tcp", "0.0.0.0:63790")
+	netListen, err := net.Listen("tcp", conf.GetBaseConfig().Redis.Addr)
+	if err != nil {
+		log.Err("zh-CN", "", err)
+		return
+	}
+	log.Info("zh-CN", "Redis listening "+conf.GetBaseConfig().Redis.Addr)
 
 	defer netListen.Close()
 
