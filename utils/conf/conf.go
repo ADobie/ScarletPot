@@ -17,8 +17,10 @@ type BaseConfig struct {
 		Addr string `toml:"addr"`
 	} `toml:"mysql"`
 	SSH struct {
-		Addr   string `toml:"addr"`
-		Prefix string `toml:"prefix"`
+		Addr     string `toml:"addr"`
+		Prefix   string `toml:"prefix"`
+		User     string `toml:"user"`
+		Password string `toml:"password"`
 	} `toml:"ssh"`
 	Http struct {
 		Addr string `toml:"addr"`

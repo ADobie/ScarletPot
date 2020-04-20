@@ -22,7 +22,7 @@ var lang string
 
 func Start() {
 	lang = conf.GetUserConfig().Lang.Lang
-	errT := ssh.ListenAndServe(conf.GetBaseConfig().SSH.Addr, func(s ssh.Session) {
+	ssh.ListenAndServe(conf.GetBaseConfig().SSH.Addr, func(s ssh.Session) {
 		term := terminal.NewTerminal(s, conf.GetBaseConfig().SSH.Prefix+" ")
 		arr := strings.Split(s.RemoteAddr().String(), ":")
 		report.Do("SSH", arr[0], "", "建立链接")
@@ -50,10 +50,23 @@ func Start() {
 				log.Err(lang, " ", err)
 			}
 		}
-	})
-	if errT != nil {
-		log.Err(lang, " ", errT)
-	}
+	},
+		ssh.PasswordAuth(func(s ssh.Context, passwd string) bool {
+			info := s.User() + " " + passwd
+			arr := strings.Split(s.RemoteAddr().String(), ":")
+			log.Info("zh-CN", arr[0]+" 正在尝试连接")
+			report.Do("SSH", arr[0], "", info)
+
+			username := conf.GetBaseConfig().SSH.User
+			password := conf.GetBaseConfig().SSH.Password
+
+			if username == s.User() && password == passwd {
+				report.Do("SSH", arr[0], "", "密码正确 已进入ssh")
+				return true
+			}
+			return false
+		}),
+	)
 }
 
 type CmdRes struct {

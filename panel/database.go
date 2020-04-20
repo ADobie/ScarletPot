@@ -62,7 +62,7 @@ type SpInfo struct {
 	//ID          uint   `gorm:"primary_key;AUTO_INCREMENT"`
 	Type        string `json:"type" gorm:"column:type;type:varchar(255)"`
 	WebApp      string `json:"webApp" gorm:"column:web_app;type:varchar(255)"`
-	Info        string `json:"detail" gorm:"column:info;type:text"`
+	Info        string `json:"detail" gorm:"column:info;type:longtext"`
 	AttackIP    string `json:"attackIp" gorm:"column:attack_ip;type:varchar(255)"`
 	ClientIP    string `gorm:"column:client_ip;type:varchar(255)"`
 	AccessToken string `json:"accessToken" gorm:"column:access_token;type:varchar(255)"`
