@@ -26,11 +26,12 @@ func Start() {
 		term := terminal.NewTerminal(s, conf.GetBaseConfig().SSH.Prefix+" ")
 		arr := strings.Split(s.RemoteAddr().String(), ":")
 		report.Do("SSH", arr[0], "", "建立链接")
-
-		line := ""
 		for {
-			line, _ = term.ReadLine()
+			line, err := term.ReadLine()
 			if line == "exit" {
+				break
+			}
+			if err != nil {
 				break
 			}
 			if strings.Contains(line, "cd") {
@@ -45,7 +46,7 @@ func Start() {
 			// 上报ssh蜜罐信息
 			go report.Do("SSH", arr[0], "", line)
 
-			_, err := io.WriteString(s, output)
+			_, err = io.WriteString(s, output)
 			if err != nil {
 				log.Err(lang, " ", err)
 			}

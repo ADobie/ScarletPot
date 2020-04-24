@@ -2,6 +2,7 @@ package panel
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
 	"github.com/jinzhu/gorm"
 	"scarletpot/utils/conf"
 )
@@ -11,6 +12,7 @@ type Service struct {
 	UserConf conf.UserConfig
 	Router   *gin.Engine
 	Mysql    *gorm.DB
+	Ws       *websocket.Conn
 }
 
 func (s *Service) init() {

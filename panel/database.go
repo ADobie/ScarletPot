@@ -16,6 +16,17 @@ import (
 | sp_info              |
 | sp_user              |
 +----------------------+
+
+- 2020.4.24 数据库结构更新
+[sp_info]
+err次数  err_count
+攻击ip地区 ip_area
+是否在境内 is_ip_inner
+
+
+
+
+
 */
 
 /*

@@ -26,9 +26,11 @@ func (s *Service) reportHandler(c *gin.Context) (int, interface{}) {
 
 	if s.checkIfExist(data.AttackIP, data.Type, data.AccessToken) {
 		s.updateInfo(spInfos)
+		s.wsSend(s.getAttackCount())
 		return s.successJSON("info数据更新成功")
 	}
 	s.insertFirst(spInfos)
+	s.updateInfo(spInfos)
 	return s.successJSON("数据上报成功")
 }
 

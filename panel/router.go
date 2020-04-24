@@ -24,6 +24,14 @@ func (s *Service) initRouter() *gin.Engine {
 	//	s.dataHandler(mod, c)
 	//})
 
+	r.GET("/ping", func(c *gin.Context) {
+		s.ping(c)
+	})
+
+	r.GET("/ws", func(c *gin.Context) {
+		s.wsHandler(c)
+	})
+
 	return r
 
 	// 获取攻击列表信息
