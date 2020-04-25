@@ -3,3 +3,4 @@
 .Ds_Store
 test/
 scarletpot
+logs/*

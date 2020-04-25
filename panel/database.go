@@ -19,13 +19,9 @@ import (
 
 - 2020.4.24 数据库结构更新
 [sp_info]
-err次数  err_count
+err次数  err_count (用于统计上报成功量)
 攻击ip地区 ip_area
 是否在境内 is_ip_inner
-
-
-
-
 
 */
 
@@ -105,6 +101,21 @@ type SpUser struct {
 	CreatedAt time.Time
 }
 
+/*
+	日志表 记录上报失败情况
+*/
+type SpLog struct {
+	gorm.Model
+	Type        string `json:"type" gorm:"column:type;type:varchar(255)"`
+	Level       string `json:"level" gorm:"column:level;type:varchar(255)"`
+	WebApp      string `json:"webApp" gorm:"column:web_app;type:varchar(255)"`
+	Info        string `json:"detail" gorm:"column:info;type:longtext"`
+	AttackIP    string `json:"attackIp" gorm:"column:attack_ip;type:varchar(255)"`
+	ClientIP    string `gorm:"column:client_ip;type:varchar(255)"`
+	AccessToken string `json:"accessToken" gorm:"column:access_token;type:varchar(255)"`
+	Count       uint   `gorm:"column:count;type:int;default:0"`
+}
+
 func (s *Service) initMysql() {
 	db, err := gorm.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s)/%s?parseTime=true&loc=Local&charset=utf8mb4,utf8",
 		s.UserConf.Database.DbUser,
@@ -118,5 +129,5 @@ func (s *Service) initMysql() {
 
 	s.Mysql = db
 	// 创建表自动迁移
-	s.Mysql.AutoMigrate(&SpAdmin{}, &SpInfo{}, &SpUser{})
+	s.Mysql.AutoMigrate(&SpAdmin{}, &SpInfo{}, &SpUser{}, &SpLog{})
 }

@@ -2,10 +2,16 @@ package conf
 
 import (
 	"github.com/BurntSushi/toml"
-	"log"
+	"scarletpot/utils/log"
 )
 
 type BaseConfig struct {
+	Logs struct {
+		ErrorLog string `toml:"errorLog"`
+		InfoLog  string `toml:"infoLog"`
+		DebugLog string `toml:"debugLog"`
+	} `toml:"logs"`
+
 	API struct {
 		APIKeyR     string `toml:"apiKeyR"`
 		APIQSecretR string `toml:"apiQSecretR"`
@@ -54,7 +60,7 @@ func GetUserConfig() UserConfig {
 	var ucg UserConfig
 	var ucPath string = "conf/user.config.toml"
 	if _, err := toml.DecodeFile(ucPath, &ucg); err != nil {
-		log.Fatal(err)
+		log.Err("zh-CN", "", err)
 	}
 	return ucg
 }
@@ -63,7 +69,7 @@ func GetBaseConfig() BaseConfig {
 	var cfg BaseConfig
 	var cfgPath string = "conf/base.config.toml"
 	if _, err := toml.DecodeFile(cfgPath, &cfg); err != nil {
-		log.Fatal(err)
+		log.Err("zh-CN", "", err)
 	}
 	return cfg
 }

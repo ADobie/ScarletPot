@@ -1,5 +1,10 @@
 # 蜜罐服务配置
 
+[logs]
+errorLog = "error.log"
+infoLog = "info.log"
+debugLog = "debug.log"
+
 [api]
 apiKeyR = ""                                    # 蜜罐信息apiKey
 apiQSecretR = ""                                # 蜜罐信息apiSec (通过 apikeyX 和apiSecretX 可通过接口获取 AccessToken)

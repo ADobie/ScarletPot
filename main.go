@@ -11,6 +11,7 @@ import (
 )
 
 func main() {
+	//log.WriteLog("error", "测试日志")
 	//args := os.Args
 	//if args == nil || len(args) < 2 {
 	//	help.Info()
