@@ -3,19 +3,18 @@ package log
 import (
 	"log"
 	"os"
-	"scarletpot/utils/conf"
 )
 
 func WriteLog(level string, content interface{}) {
 	var fileName string
 	switch level {
 	case "error":
-		fileName = conf.GetBaseConfig().Logs.ErrorLog
+		fileName = "error.log"
 	// info 包括 warn
 	case "info":
-		fileName = conf.GetBaseConfig().Logs.InfoLog
+		fileName = "info.log"
 	case "debug":
-		fileName = conf.GetBaseConfig().Logs.DebugLog
+		fileName = "debug.log"
 	default:
 		panic("日志等级错误")
 	}
