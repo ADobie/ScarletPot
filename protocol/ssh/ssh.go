@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"scarletpot/report"
 	"scarletpot/utils/conf"
+	ipinfo "scarletpot/utils/ip"
 	"scarletpot/utils/log"
 	"scarletpot/utils/request"
 	"strings"
@@ -19,19 +20,24 @@ var lang string
 
 // TODO：使用api获取命令执行结果的时候会因为延迟的原因导致无限上报bug
 // TODO: SSH服务可使用高交互蜜罐 docker
+var country, city, region string
 
 func Start() {
 	lang = conf.GetUserConfig().Lang.Lang
 	ssh.ListenAndServe(conf.GetBaseConfig().SSH.Addr, func(s ssh.Session) {
 		term := terminal.NewTerminal(s, conf.GetBaseConfig().SSH.Prefix+" ")
 		arr := strings.Split(s.RemoteAddr().String(), ":")
-		report.Do("SSH", arr[0], "", "建立链接")
+		ip := arr[0]
+		country, city, region = ipinfo.GetPos(ip)
+
+		report.Do("SSH", ip, "", "建立链接", country, city, region, false)
 		for {
 			line, err := term.ReadLine()
 			if line == "exit" {
 				break
 			}
 			if err != nil {
+				log.Err("zh-CN", "", err)
 				break
 			}
 			if strings.Contains(line, "cd") {
@@ -44,7 +50,7 @@ func Start() {
 			output := "error\n"
 
 			// 上报ssh蜜罐信息
-			go report.Do("SSH", arr[0], "", line)
+			go report.Do("SSH", arr[0], "", line, country, city, region, true)
 
 			_, err = io.WriteString(s, output)
 			if err != nil {
@@ -55,14 +61,14 @@ func Start() {
 		ssh.PasswordAuth(func(s ssh.Context, passwd string) bool {
 			info := s.User() + " " + passwd
 			arr := strings.Split(s.RemoteAddr().String(), ":")
-			log.Info("zh-CN", arr[0]+" 正在尝试连接")
-			report.Do("SSH", arr[0], "", info)
+			log.Err("zh-CN", arr[0]+" 正在尝试连接")
+			report.Do("SSH", arr[0], "", info, country, city, region, false)
 
 			username := conf.GetBaseConfig().SSH.User
 			password := conf.GetBaseConfig().SSH.Password
 
 			if username == s.User() && password == passwd {
-				report.Do("SSH", arr[0], "", "密码正确 已进入ssh")
+				report.Do("SSH", arr[0], "", "密码正确 已进入ssh", country, city, region, true)
 				return true
 			}
 			return false
@@ -78,7 +84,7 @@ type CmdRes struct {
 	Time   string `json:"time"`
 }
 
-// 通过接口获取命令结果
+// 通过接口获取命令结果 暂时不用
 func getResultFromApi(cmd string) CmdRes {
 	var cmdRes CmdRes
 	encodeString := base64.StdEncoding.EncodeToString([]byte("#!/bin/bash\n" + cmd))

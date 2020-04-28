@@ -9,9 +9,13 @@ import (
 func Err(lang string, info string, err ...interface{}) {
 	if err != nil {
 		color.Red.Println(i18n.I18nStr(lang, "[ERR] "+info), err)
+		// 写入日志文件
+		DoLogs("error")
 		WriteLog("error", err)
+		// 日志记录失败次数
 		return
 	}
+	DoLogs("error")
 	WriteLog("error", info)
 	color.Red.Println(i18n.I18nStr(lang, "[ERR] "+info))
 }
@@ -19,7 +23,6 @@ func Err(lang string, info string, err ...interface{}) {
 func Info(lang string, info string) {
 	color.Info.Println(i18n.I18nStr(lang, "[INFO] "), i18n.I18nStr(lang, info))
 	WriteLog("info", info)
-
 }
 
 func Warn(lang string, info string) {

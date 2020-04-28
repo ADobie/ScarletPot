@@ -17,12 +17,12 @@ require (
 	github.com/gorilla/sessions v1.2.0 // indirect
 	github.com/gorilla/websocket v1.4.2
 	github.com/gosimple/slug v1.9.0 // indirect
+	github.com/ipipdotnet/ipdb-go v1.3.0
 	github.com/jinzhu/configor v1.1.1 // indirect
 	github.com/jinzhu/gorm v1.9.12
 	github.com/jinzhu/now v1.1.1 // indirect
 	github.com/lib/pq v1.3.0 // indirect
 	github.com/microcosm-cc/bluemonday v1.0.2 // indirect
-	github.com/op/go-logging v0.0.0-20160315200505-970db520ece7
 	github.com/panjf2000/ants v1.2.0
 	github.com/qor/admin v0.0.0-20200315024928-877b98a68a6f // indirect
 	github.com/qor/assetfs v0.0.0-20170713023933-ff57fdc13a14 // indirect

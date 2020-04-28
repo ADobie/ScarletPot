@@ -15,6 +15,10 @@ type Info struct {
 	Type        string `json:"type"`
 	WebApp      string `json:"webApp"`
 	Detail      string `json:"detail"`
+	Country     string `json:"country"`
+	City        string `json:"city"`
+	Valid       bool   `json:"valid"`
+	Region      string `json:"region"`
 }
 
 // 平台回应结果结构
@@ -26,13 +30,17 @@ type RetMsg struct {
 
 var apiUrl = "http://" + conf.GetUserConfig().Panel.PanelAddr + "/api/report"
 
-func buildJson(atype string, attackIP string, webApp string, detail string) []byte {
+func buildJson(atype string, attackIP string, webApp string, detail string, country string, city string, region string, valid bool) []byte {
 	info := Info{
 		AttackIP:    attackIP,
 		AccessToken: "from base.config",
 		Type:        atype,
 		WebApp:      webApp,
 		Detail:      detail,
+		Country:     country,
+		City:        city,
+		Region:      region,
+		Valid:       valid,
 	}
 	attackInfo, err := json.Marshal(info)
 	if err != nil {
@@ -43,14 +51,14 @@ func buildJson(atype string, attackIP string, webApp string, detail string) []by
 }
 
 // 只需负责上报数据，具体是插入还是更新 由panel来负责
-func Do(atype string, attackIP string, webApp string, detail string) {
-	info := buildJson(atype, attackIP, webApp, detail)
+func Do(atype string, attackIP string, webApp string, detail string, country string, city string, region string, valid bool) {
+	info := buildJson(atype, attackIP, webApp, detail, country, city, region, valid)
 	fmt.Println(string(info))
 	resp, err := request.PostJson(apiUrl, info)
 	defer resp.Body.Close()
 	if err != nil {
-		log.Err("zh-CN", "与远程上报服务器断开连接")
+		log.Err("zh-CN", "", err)
 		// TODO 后期做尝试断线重连
-		panic(err)
+		//panic(err)
 	}
 }

@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"scarletpot/report"
 	"scarletpot/utils/conf"
+	ipinfo "scarletpot/utils/ip"
 	"scarletpot/utils/log"
 	"strings"
 )
@@ -33,7 +34,7 @@ func httpHandler(w http.ResponseWriter, r *http.Request) {
 	info := r.Method + " " + r.URL.Path + "?" + arg
 	fmt.Println(info)
 	remoteAddr := strings.Split(r.RemoteAddr, ":")
-
-	go report.Do("HTTP", remoteAddr[0], "", info)
+	country, city, region := ipinfo.GetPos(remoteAddr[0])
+	go report.Do("HTTP", remoteAddr[0], "", info, country, city, region, true)
 	fmt.Fprintf(w, msg)
 }

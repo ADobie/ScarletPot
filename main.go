@@ -34,6 +34,7 @@ func main() {
 		go web.Start()
 	})
 	wg.Wait()
+	//ip.GetPos("123")
 	//} else {
 	//	help.Info()
 	//}

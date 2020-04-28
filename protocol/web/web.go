@@ -7,10 +7,13 @@ import (
 	"scarletpot/report"
 	"scarletpot/utils/base64"
 	"scarletpot/utils/conf"
+	ipinfo "scarletpot/utils/ip"
 	"scarletpot/utils/log"
 	"scarletpot/utils/url"
 	"strings"
 )
+
+var country, city, region string
 
 func Start() {
 	initJsonp()
@@ -23,7 +26,9 @@ func initJsonp() {
 		r.LoadHTMLGlob("./protocol/web/template/jsonp/index.html")
 		c.HTML(http.StatusOK, "index.html", gin.H{})
 		ip := strings.Split(c.Request.RemoteAddr, ":")[0]
-		report.Do("Jsonp", ip, "weiboJsonp", "访问")
+		country, city, region = ipinfo.GetPos(ip)
+
+		report.Do("Jsonp", ip, "weiboJsonp", "访问", country, city, region, false)
 
 	})
 
@@ -33,10 +38,10 @@ func initJsonp() {
 		username := parseWbName(res)
 		ip := strings.Split(c.Request.RemoteAddr, ":")[0]
 		if username == "登录" {
-			report.Do("Jsonp", ip, "weiboJsonp", "未登录")
+			report.Do("Jsonp", ip, "weiboJsonp", "未登录", country, city, region, false)
 			return
 		}
-		report.Do("Jsonp", ip, "weiboJsonp", "username: "+username)
+		report.Do("Jsonp", ip, "weiboJsonp", "已登录: username: "+username, country, city, region, true)
 	})
 	r.Run(conf.GetBaseConfig().Web.Jsonp)
 }

@@ -5,6 +5,7 @@ import (
 	"net"
 	"scarletpot/report"
 	"scarletpot/utils/conf"
+	ipinfo "scarletpot/utils/ip"
 	"scarletpot/utils/log"
 	"scarletpot/utils/pool"
 	"strconv"
@@ -14,6 +15,8 @@ import (
 
 var redData map[string]string
 var ip string
+
+var country, city, region string
 
 func Start() {
 	redData = make(map[string]string)
@@ -42,8 +45,9 @@ func Start() {
 			}
 
 			ip = strings.Split(conn.RemoteAddr().String(), ":")[0]
-			report.Do("Redis", ip, "", "建立链接")
+			country, city, region = ipinfo.GetPos(ip)
 
+			report.Do("Redis", ip, "", "建立链接", country, city, region, false)
 			log.Info("zh-CN", "Redis "+ip+" 已经连接")
 
 			go handleConnection(conn)
@@ -79,7 +83,7 @@ func handleConnection(conn net.Conn) {
 				key := string(value[1])
 				val := string(value[2])
 				redData[key] = val
-				go report.Do("Redis", ip, "", value[0]+" "+value[1]+" "+value[2])
+				go report.Do("Redis", ip, "", value[0]+" "+value[1]+" "+value[2], country, city, region, true)
 
 				conn.Write([]byte("+OK\r\n"))
 			} else if value[0] == "GET" || value[0] == "get" {
@@ -90,7 +94,7 @@ func handleConnection(conn net.Conn) {
 
 					valLen := strconv.Itoa(len(val))
 					str := "$" + valLen + "\r\n" + val + "\r\n"
-					go report.Do("Redis", ip, "", value[0]+" "+value[1])
+					go report.Do("Redis", ip, "", value[0]+" "+value[1], country, city, region, true)
 					conn.Write([]byte(str))
 				}
 				if err != nil {
@@ -98,10 +102,10 @@ func handleConnection(conn net.Conn) {
 				}
 			} else {
 				err := func() {
-					go report.Do("Redis", ip, "", value[0]+" "+value[1])
+					go report.Do("Redis", ip, "", value[0]+" "+value[1], country, city, region, true)
 				}
 				if err != nil {
-					go report.Do("Redis", ip, "", value[0])
+					go report.Do("Redis", ip, "", value[0], country, city, region, true)
 				}
 				conn.Write([]byte("+OK\r\n"))
 			}

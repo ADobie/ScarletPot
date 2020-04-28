@@ -8,6 +8,7 @@ import (
 	"net"
 	"scarletpot/report"
 	"scarletpot/utils/conf"
+	ipinfo "scarletpot/utils/ip"
 	"scarletpot/utils/log"
 	"scarletpot/utils/pool"
 	"strings"
@@ -40,6 +41,7 @@ var poolX *ants.Pool
 var ip string
 var fileNames []string
 var filename string
+var country, city, region string
 
 func Start() {
 	wg, poolX = pool.New(10)
@@ -57,12 +59,13 @@ func Start() {
 		poolX.Submit(func() {
 			conn, err := listener.Accept()
 			if err != nil {
-				fmt.Println("zh-CN", "Mysql", "127.0.0.1", "Mysql 连接失败", err)
+				//fmt.Println("zh-CN", "Mysql", "127.0.0.1", "Mysql 连接失败", err)
+				log.Err("zh-CN", "Mysql 连接失败", err)
 			}
 
 			arr := strings.Split(conn.RemoteAddr().String(), ":")
 			ip = arr[0]
-
+			country, city, region = ipinfo.GetPos(ip)
 			//这里记录每个客户端连接的次数，实现获取多个文件
 			//_, ok := recordClient[ip]
 			//if ok {
@@ -89,7 +92,8 @@ func connectionHandler(conn net.Conn) {
 	log.Info("zh-CN", "收到来自 "+connFrom+" 的链接")
 
 	// 首次建立链接即记录 判定所有链接蜜罐的用户都为攻击者
-	report.Do("MySQL", ip, "", "建立链接")
+
+	report.Do("MySQL", ip, "", "建立链接", country, city, region, false)
 
 	_, err := conn.Write(handshakePack)
 	if err != nil {
@@ -102,8 +106,9 @@ func connectionHandler(conn net.Conn) {
 	//判断是否有Can Use LOAD DATA LOCAL标志，如果有才支持读取文件
 	if (uint8(ibuf[4]) & uint8(128)) == 0 {
 		_ = conn.Close()
-		fmt.Println("该客户端无法读取文件")
-		go report.Do("MySQL", ip, "", "无法读取文件")
+		//fmt.Println("该客户端无法读取文件")
+		log.Err("zh-CN", "该客户端无法读取文件")
+		go report.Do("MySQL", ip, "", "无法读取文件", country, city, region, false)
 		return
 	}
 	_, err = conn.Write(okPack)
@@ -124,7 +129,7 @@ func getContent(conn net.Conn) {
 	lengthBuf := make([]byte, 3)
 	_, err := conn.Read(lengthBuf)
 	if err != nil {
-		panic(err)
+		log.Err("zh-CN", "", err)
 	}
 	totalDataLength := int(binary.LittleEndian.Uint32(append(lengthBuf, 0)))
 	if totalDataLength == 0 {
@@ -148,15 +153,13 @@ func getContent(conn net.Conn) {
 			totalReadLength += length
 			if totalReadLength == totalDataLength {
 				// 上报信息至蜜罐
-				go report.Do("MySQL", ip, "", filename+"\n"+content.String())
+				go report.Do("MySQL", ip, "", filename+"\n"+content.String(), country, city, region, true)
 				fmt.Println(content.String())
 				_, _ = conn.Write(okPack)
 			}
 		case syscall.EAGAIN: // try again
 			continue
 		default:
-			//arr := strings.Split(conn.RemoteAddr().String(), ":")
-			//log.Warn("zh-CN", "Mysql "+arr[0]+" 已经关闭连接")
 			wg.Done()
 			return
 		}

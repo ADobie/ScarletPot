@@ -14,6 +14,10 @@ func (s *Service) initRouter() *gin.Engine {
 		c.JSON(s.reportHandler(c))
 	})
 
+	r.POST("/api/log", func(c *gin.Context) {
+		c.JSON(s.logsHandler(c))
+	})
+
 	r.POST("/api/token/gen", func(c *gin.Context) {
 		c.JSON(s.genApiToken(c))
 	})
@@ -31,6 +35,10 @@ func (s *Service) initRouter() *gin.Engine {
 	r.GET("/ws", func(c *gin.Context) {
 		s.wsHandler(c)
 	})
+
+	//r.GET("/dataInit", func(c *gin.Context) {
+	//	c.String(200, s.dataInfo())
+	//})
 
 	return r
 

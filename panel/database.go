@@ -66,16 +66,17 @@ type SpAdmin struct {
 
 type SpInfo struct {
 	gorm.Model
-	//ID          uint   `gorm:"primary_key;AUTO_INCREMENT"`
 	Type        string `json:"type" gorm:"column:type;type:varchar(255)"`
 	WebApp      string `json:"webApp" gorm:"column:web_app;type:varchar(255)"`
 	Info        string `json:"detail" gorm:"column:info;type:longtext"`
 	AttackIP    string `json:"attackIp" gorm:"column:attack_ip;type:varchar(255)"`
+	Country     string `gorm:"column:country;type:varchar(255)"`
+	City        string `gorm:"column:city;type:varchar(255)"`
+	Region      string `json:"region" gorm:"column:region"`
 	ClientIP    string `gorm:"column:client_ip;type:varchar(255)"`
 	AccessToken string `json:"accessToken" gorm:"column:access_token;type:varchar(255)"`
 	Count       uint   `gorm:"column:count;type:int;default:0"`
-	//CreatedAt   time.Time
-	//UpdateAt    time.Time
+	Valid       bool   `json:"valid" gorm:"column:valid;"`
 }
 
 /*
@@ -102,16 +103,13 @@ type SpUser struct {
 }
 
 /*
-	日志表 记录上报失败情况
+	日志表 记录上报情况
 */
 type SpLog struct {
 	gorm.Model
-	Type        string `json:"type" gorm:"column:type;type:varchar(255)"`
 	Level       string `json:"level" gorm:"column:level;type:varchar(255)"`
-	WebApp      string `json:"webApp" gorm:"column:web_app;type:varchar(255)"`
-	Info        string `json:"detail" gorm:"column:info;type:longtext"`
-	AttackIP    string `json:"attackIp" gorm:"column:attack_ip;type:varchar(255)"`
 	ClientIP    string `gorm:"column:client_ip;type:varchar(255)"`
+	Info        string `gorm:"column:info;type:text"`
 	AccessToken string `json:"accessToken" gorm:"column:access_token;type:varchar(255)"`
 	Count       uint   `gorm:"column:count;type:int;default:0"`
 }

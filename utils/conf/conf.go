@@ -2,7 +2,7 @@ package conf
 
 import (
 	"github.com/BurntSushi/toml"
-	"scarletpot/utils/log"
+	"log"
 )
 
 type BaseConfig struct {
@@ -60,7 +60,7 @@ func GetUserConfig() UserConfig {
 	var ucg UserConfig
 	var ucPath string = "conf/user.config.toml"
 	if _, err := toml.DecodeFile(ucPath, &ucg); err != nil {
-		log.Err("zh-CN", "", err)
+		log.Fatal(err)
 	}
 	return ucg
 }
@@ -69,7 +69,7 @@ func GetBaseConfig() BaseConfig {
 	var cfg BaseConfig
 	var cfgPath string = "conf/base.config.toml"
 	if _, err := toml.DecodeFile(cfgPath, &cfg); err != nil {
-		log.Err("zh-CN", "", err)
+		log.Fatal(err)
 	}
 	return cfg
 }
