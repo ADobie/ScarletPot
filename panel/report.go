@@ -1,12 +1,14 @@
 package panel
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
 // TODO: 处理蜜罐上报信息 并存入数据库
+var data SpInfo
+
 func (s *Service) reportHandler(c *gin.Context) (int, interface{}) {
-	var data SpInfo
 	err := c.BindJSON(&data)
 	if err != nil {
 		return s.errJSON(500, 10000, "JSON解析失败")
@@ -23,7 +25,8 @@ func (s *Service) reportHandler(c *gin.Context) (int, interface{}) {
 		Country:     data.Country,
 		City:        data.City,
 		Region:      data.Region,
-		Valid:       data.Valid,
+		Valid:       1,
+		Invalid:     1,
 	}
 
 	if s.checkIfExist(data.AttackIP, data.Type, data.AccessToken) {
@@ -38,8 +41,8 @@ func (s *Service) reportHandler(c *gin.Context) (int, interface{}) {
 
 // 检查是否已经存在该攻击者记录
 func (s *Service) checkIfExist(attackIp string, attackType string, token string) bool {
-	var data SpInfo
-	res := s.Mysql.Where(map[string]interface{}{"attack_ip": attackIp, "type": attackType, "access_token": token}).Find(&data).RowsAffected
+	var datax SpInfo
+	res := s.Mysql.Where(map[string]interface{}{"attack_ip": attackIp, "type": attackType, "access_token": token}).Find(&datax).RowsAffected
 
 	// 攻击者单次攻击记录存在则返回true 否则返回false
 	if res > 0 {
@@ -59,6 +62,12 @@ func (s *Service) updateInfo(info SpInfo) {
 	var oldInfo SpInfo
 	// 旧数据拼接
 	s.Mysql.Where(map[string]interface{}{"attack_ip": info.AttackIP, "type": info.Type}).Find(&oldInfo)
+	if data.Valid == 1 {
+		fmt.Println(data.Valid)
+		s.Mysql.Model(&info).Where("attack_ip = ? AND type = ?", info.AttackIP, info.Type).Update("valid", oldInfo.Valid+1)
+	} else {
+		s.Mysql.Model(&info).Where("attack_ip = ? AND type = ?", info.AttackIP, info.Type).Update("invalid", oldInfo.Invalid+1)
+	}
 	s.Mysql.Model(&info).Where("attack_ip = ? AND type = ?", info.AttackIP, info.Type).Update("info", oldInfo.Info+"^^"+info.Info)
 	// 更新攻击次数
 	s.Mysql.Model(&info).Where("attack_ip = ? AND type = ?", info.AttackIP, info.Type).Update("count", oldInfo.Count+1)

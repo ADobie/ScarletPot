@@ -30,7 +30,7 @@ func Start() {
 		ip := arr[0]
 		country, city, region = ipinfo.GetPos(ip)
 
-		report.Do("SSH", ip, "", "建立链接", country, city, region, false)
+		report.Do("SSH", ip, "", "建立链接", country, city, region, 1)
 		for {
 			line, err := term.ReadLine()
 			if line == "exit" {
@@ -50,7 +50,7 @@ func Start() {
 			output := "error\n"
 
 			// 上报ssh蜜罐信息
-			go report.Do("SSH", arr[0], "", line, country, city, region, true)
+			go report.Do("SSH", arr[0], "", line, country, city, region, 1)
 
 			_, err = io.WriteString(s, output)
 			if err != nil {
@@ -62,13 +62,13 @@ func Start() {
 			info := s.User() + " " + passwd
 			arr := strings.Split(s.RemoteAddr().String(), ":")
 			log.Err("zh-CN", arr[0]+" 正在尝试连接")
-			report.Do("SSH", arr[0], "", info, country, city, region, false)
+			report.Do("SSH", arr[0], "", info, country, city, region, 0)
 
 			username := conf.GetBaseConfig().SSH.User
 			password := conf.GetBaseConfig().SSH.Password
 
 			if username == s.User() && password == passwd {
-				report.Do("SSH", arr[0], "", "密码正确 已进入ssh", country, city, region, true)
+				report.Do("SSH", arr[0], "", "密码正确 已进入ssh", country, city, region, 1)
 				return true
 			}
 			return false

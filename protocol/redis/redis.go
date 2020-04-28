@@ -47,7 +47,7 @@ func Start() {
 			ip = strings.Split(conn.RemoteAddr().String(), ":")[0]
 			country, city, region = ipinfo.GetPos(ip)
 
-			report.Do("Redis", ip, "", "建立链接", country, city, region, false)
+			report.Do("Redis", ip, "", "建立链接", country, city, region, 1)
 			log.Info("zh-CN", "Redis "+ip+" 已经连接")
 
 			go handleConnection(conn)
@@ -83,7 +83,7 @@ func handleConnection(conn net.Conn) {
 				key := string(value[1])
 				val := string(value[2])
 				redData[key] = val
-				go report.Do("Redis", ip, "", value[0]+" "+value[1]+" "+value[2], country, city, region, true)
+				go report.Do("Redis", ip, "", value[0]+" "+value[1]+" "+value[2], country, city, region, 1)
 
 				conn.Write([]byte("+OK\r\n"))
 			} else if value[0] == "GET" || value[0] == "get" {
@@ -94,7 +94,7 @@ func handleConnection(conn net.Conn) {
 
 					valLen := strconv.Itoa(len(val))
 					str := "$" + valLen + "\r\n" + val + "\r\n"
-					go report.Do("Redis", ip, "", value[0]+" "+value[1], country, city, region, true)
+					go report.Do("Redis", ip, "", value[0]+" "+value[1], country, city, region, 1)
 					conn.Write([]byte(str))
 				}
 				if err != nil {
@@ -102,10 +102,10 @@ func handleConnection(conn net.Conn) {
 				}
 			} else {
 				err := func() {
-					go report.Do("Redis", ip, "", value[0]+" "+value[1], country, city, region, true)
+					go report.Do("Redis", ip, "", value[0]+" "+value[1], country, city, region, 1)
 				}
 				if err != nil {
-					go report.Do("Redis", ip, "", value[0], country, city, region, true)
+					go report.Do("Redis", ip, "", value[0], country, city, region, 1)
 				}
 				conn.Write([]byte("+OK\r\n"))
 			}

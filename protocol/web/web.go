@@ -28,7 +28,7 @@ func initJsonp() {
 		ip := strings.Split(c.Request.RemoteAddr, ":")[0]
 		country, city, region = ipinfo.GetPos(ip)
 
-		report.Do("Jsonp", ip, "weiboJsonp", "访问", country, city, region, false)
+		report.Do("Jsonp", ip, "weiboJsonp", "访问", country, city, region, 0)
 
 	})
 
@@ -38,10 +38,10 @@ func initJsonp() {
 		username := parseWbName(res)
 		ip := strings.Split(c.Request.RemoteAddr, ":")[0]
 		if username == "登录" {
-			report.Do("Jsonp", ip, "weiboJsonp", "未登录", country, city, region, false)
+			report.Do("Jsonp", ip, "weiboJsonp", "未登录", country, city, region, 0)
 			return
 		}
-		report.Do("Jsonp", ip, "weiboJsonp", "已登录: username: "+username, country, city, region, true)
+		report.Do("Jsonp", ip, "weiboJsonp", "已登录: username: "+username, country, city, region, 1)
 	})
 	r.Run(conf.GetBaseConfig().Web.Jsonp)
 }

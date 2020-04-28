@@ -35,6 +35,6 @@ func httpHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(info)
 	remoteAddr := strings.Split(r.RemoteAddr, ":")
 	country, city, region := ipinfo.GetPos(remoteAddr[0])
-	go report.Do("HTTP", remoteAddr[0], "", info, country, city, region, true)
+	go report.Do("HTTP", remoteAddr[0], "", info, country, city, region, 1)
 	fmt.Fprintf(w, msg)
 }

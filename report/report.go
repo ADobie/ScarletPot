@@ -17,7 +17,7 @@ type Info struct {
 	Detail      string `json:"detail"`
 	Country     string `json:"country"`
 	City        string `json:"city"`
-	Valid       bool   `json:"valid"`
+	Valid       uint   `json:"valid"`
 	Region      string `json:"region"`
 }
 
@@ -30,7 +30,7 @@ type RetMsg struct {
 
 var apiUrl = "http://" + conf.GetUserConfig().Panel.PanelAddr + "/api/report"
 
-func buildJson(atype string, attackIP string, webApp string, detail string, country string, city string, region string, valid bool) []byte {
+func buildJson(atype string, attackIP string, webApp string, detail string, country string, city string, region string, valid uint) []byte {
 	info := Info{
 		AttackIP:    attackIP,
 		AccessToken: "from base.config",
@@ -51,7 +51,7 @@ func buildJson(atype string, attackIP string, webApp string, detail string, coun
 }
 
 // 只需负责上报数据，具体是插入还是更新 由panel来负责
-func Do(atype string, attackIP string, webApp string, detail string, country string, city string, region string, valid bool) {
+func Do(atype string, attackIP string, webApp string, detail string, country string, city string, region string, valid uint) {
 	info := buildJson(atype, attackIP, webApp, detail, country, city, region, valid)
 	fmt.Println(string(info))
 	resp, err := request.PostJson(apiUrl, info)

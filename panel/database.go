@@ -76,7 +76,8 @@ type SpInfo struct {
 	ClientIP    string `gorm:"column:client_ip;type:varchar(255)"`
 	AccessToken string `json:"accessToken" gorm:"column:access_token;type:varchar(255)"`
 	Count       uint   `gorm:"column:count;type:int;default:0"`
-	Valid       bool   `json:"valid" gorm:"column:valid;"`
+	Valid       uint   `json:"valid" gorm:"column:valid;type:int;default:0"`
+	Invalid     uint   `gorm:"column:invalid;type:int;default:0"`
 }
 
 /*

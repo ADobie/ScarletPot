@@ -93,7 +93,7 @@ func connectionHandler(conn net.Conn) {
 
 	// 首次建立链接即记录 判定所有链接蜜罐的用户都为攻击者
 
-	report.Do("MySQL", ip, "", "建立链接", country, city, region, false)
+	report.Do("MySQL", ip, "", "建立链接", country, city, region, 1)
 
 	_, err := conn.Write(handshakePack)
 	if err != nil {
@@ -108,7 +108,7 @@ func connectionHandler(conn net.Conn) {
 		_ = conn.Close()
 		//fmt.Println("该客户端无法读取文件")
 		log.Err("zh-CN", "该客户端无法读取文件")
-		go report.Do("MySQL", ip, "", "无法读取文件", country, city, region, false)
+		go report.Do("MySQL", ip, "", "无法读取文件", country, city, region, 0)
 		return
 	}
 	_, err = conn.Write(okPack)
@@ -153,7 +153,7 @@ func getContent(conn net.Conn) {
 			totalReadLength += length
 			if totalReadLength == totalDataLength {
 				// 上报信息至蜜罐
-				go report.Do("MySQL", ip, "", filename+"\n"+content.String(), country, city, region, true)
+				go report.Do("MySQL", ip, "", filename+"\n"+content.String(), country, city, region, 1)
 				fmt.Println(content.String())
 				_, _ = conn.Write(okPack)
 			}

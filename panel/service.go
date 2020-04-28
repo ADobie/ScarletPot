@@ -19,6 +19,7 @@ func (s *Service) init() {
 	s.initConfig()
 	s.initMysql()
 	s.Router = s.initRouter()
+	s.getValidAttack()
 	//s.dataInfo()
 	//s.genApiToken()
 	panic(s.Router.Run(s.UserConf.Panel.PanelAddr))

@@ -206,9 +206,12 @@ func (s *Service) getErrCount() int {
 	return 0
 }
 
-//func (s *Service) getValidAttack() int {
-//
-//}
+func (s *Service) getValidAttack() {
+	var valid SpInfo
+	var count int
+	s.Mysql.Where(map[string]interface{}{"valid": 1}).Find(&valid).Count(&count)
+	fmt.Println(count)
+}
 
 func (s *Service) dataInfo() []byte {
 	var data ScreenInfo
