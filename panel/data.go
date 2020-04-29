@@ -63,17 +63,17 @@ import (
 // json数据格式
 type ScreenInfo struct {
 	Data struct {
-		ReportCount int `json:"reportCount"`
-		ErrCount    int `json:"errCount"`
-		ValidAttack int `json:"validAttack"`
-		TotalAttack int `json:"totalAttack"`
-		DayAttack   int `json:"dayAttack"`
-		SSHCount    int `json:"sshCount"`
-		MysqlCount  int `json:"mysqlCount"`
-		TelnetCount int `json:"telnetCount"`
-		ProxyCount  int `json:"proxyCount"`
-		RedisCount  int `json:"redisCount"`
-		WebCount    int `json:"webCount"`
+		ReportCount   int     `json:"reportCount"`
+		ErrCount      int     `json:"errCount"`
+		ValidAttack   int     `json:"validCount"`
+		InvalidAttack int     `json:"invalidCount"`
+		DayAttack     float64 `json:"dayCount"`
+		SSHCount      int     `json:"sshCount"`
+		MysqlCount    int     `json:"mysqlCount"`
+		TelnetCount   int     `json:"telnetCount"`
+		ProxyCount    int     `json:"proxyCount"`
+		RedisCount    int     `json:"redisCount"`
+		WebCount      int     `json:"webCount"`
 	} `json:"data"`
 	Status struct {
 		CPU  int `json:"cpu"`
@@ -99,8 +99,6 @@ type ScreenInfo struct {
 }
 
 var connClient = make(map[*websocket.Conn]bool)
-
-//var jsonInfo string
 
 // 去除跨域限制
 var upGrader = websocket.Upgrader{
@@ -172,6 +170,7 @@ func (s *Service) ping(c *gin.Context) {
 	}
 }
 
+// 获取总上报次数
 func (s *Service) getReportCount() int {
 	rows, err := s.Mysql.Table("sp_infos").Select("sum(count) AS total").Rows()
 	if err != nil {
@@ -189,6 +188,7 @@ func (s *Service) getReportCount() int {
 	return 0
 }
 
+// 获取上报错误次数
 func (s *Service) getErrCount() int {
 	rows, err := s.Mysql.Table("sp_logs").Select("sum(count) AS total").Rows()
 	if err != nil {
@@ -206,19 +206,86 @@ func (s *Service) getErrCount() int {
 	return 0
 }
 
-func (s *Service) getValidAttack() {
-	var valid SpInfo
-	var count int
-	s.Mysql.Where(map[string]interface{}{"valid": 1}).Find(&valid).Count(&count)
-	fmt.Println(count)
+// 获取有效攻击数据
+func (s *Service) getValidAttack() int {
+	rows, err := s.Mysql.Table("sp_infos").Select("sum(valid) AS total").Rows()
+	if err != nil {
+		fmt.Println("报错1 %v", err)
+	}
+	defer rows.Close()
+	if rows.Next() {
+		total := 0
+		err := rows.Scan(&total)
+		if err != nil {
+			fmt.Println(err)
+		}
+		return total
+	}
+	return 0
 }
 
+// 获取无效攻击次数
+func (s *Service) getInvalidAttack() int {
+	rows, err := s.Mysql.Table("sp_infos").Select("sum(invalid) AS total").Rows()
+	if err != nil {
+		fmt.Println("报错1 %v", err)
+	}
+	defer rows.Close()
+	if rows.Next() {
+		total := 0
+		err := rows.Scan(&total)
+		if err != nil {
+			fmt.Println(err)
+		}
+		return total
+	}
+	return 0
+}
+
+func (s *Service) getDayAverageCount() float64 {
+	var count int
+	s.Mysql.Table("sp_infos").
+		Select("DATE_FORMAT(created_at, '%Y-%m-%d') AS date,sum( count ) AS day_attack").
+		Where("`created_at` > '2020-04-20' AND `created_at` < '2100-09-06'").
+		Group("DATE_FORMAT(created_at, '%Y-%m-%d')").
+		Order("DATE_FORMAT(created_at, '%Y-%m-%d') asc").Count(&count)
+
+	rows, err := s.Mysql.Table("sp_infos").
+		Select("DATE_FORMAT( created_at, '%Y-%m-%d' ) AS date,sum( count ) AS day_attack").
+		Where("`created_at` > '2020-04-20' AND `created_at` < '2100-09-06'").
+		Group("date").
+		Order("date asc").Rows()
+	if err != nil {
+		panic(err)
+	}
+
+	var sum float64
+	for rows.Next() {
+		var date string
+		dayAttack := 0
+		err := rows.Scan(&date, &dayAttack)
+		sum += float64(dayAttack)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
+	average := sum / float64(count)
+	return average
+}
+
+// 构建前端数据json
 func (s *Service) dataInfo() []byte {
 	var data ScreenInfo
 	data.Data.ReportCount = s.getReportCount()
 	data.Data.ErrCount = s.getErrCount()
-
+	data.Data.ValidAttack = s.getValidAttack()
+	data.Data.InvalidAttack = s.getInvalidAttack()
+	data.Data.DayAttack = s.getDayAverageCount()
 	jsonInfo, _ := json.Marshal(&data)
-	//jsonInfo := json.RawMessage(a)
+	fmt.Println(string(jsonInfo))
 	return jsonInfo
+}
+
+func (s *Service) getServiceStatus() {
+
 }
