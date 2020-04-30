@@ -81,12 +81,12 @@ type ScreenInfo struct {
 		Disk int `json:"disk"`
 	} `json:"status"`
 	Service struct {
-		SSH    bool `json:"ssh"`
-		Telnet bool `json:"telnet"`
-		Proxy  bool `json:"proxy"`
-		Mysql  bool `json:"mysql"`
-		Redis  bool `json:"redis"`
-		Web    bool `json:"web"`
+		SSH    int `json:"ssh"`
+		Telnet int `json:"telnet"`
+		Proxy  int `json:"proxy"`
+		Mysql  int `json:"mysql"`
+		Redis  int `json:"redis"`
+		Web    int `json:"web"`
 	} `json:"service"`
 	List struct {
 		Type      string `json:"type"`
@@ -244,6 +244,20 @@ func (s *Service) getInvalidAttack() int {
 
 func (s *Service) getDayAverageCount() float64 {
 	var count int
+
+	/*
+		SELECT
+			DATE_FORMAT( created_at, '%Y-%m-%d' ) AS date,
+			sum( count ) AS count
+		FROM
+			`sp_infos`
+		WHERE
+			( `created_at` > '2018-08-30' AND `created_at` < '2020-09-06' )
+		GROUP BY
+			date
+		ORDER BY
+			date ASC
+	*/
 	s.Mysql.Table("sp_infos").
 		Select("DATE_FORMAT(created_at, '%Y-%m-%d') AS date,sum( count ) AS day_attack").
 		Where("`created_at` > '2020-04-20' AND `created_at` < '2100-09-06'").
@@ -273,19 +287,51 @@ func (s *Service) getDayAverageCount() float64 {
 	return average
 }
 
+// 各服务受攻击次数
+func (s *Service) getServiceCount() map[string]int {
+	rows, err := s.Mysql.Table("sp_infos").Select("type as service, sum(count) as total").Group("service").Order("service desc").Rows()
+	if err != nil {
+		panic(err)
+	}
+	ret := make(map[string]int, 0)
+
+	for rows.Next() {
+		var service string
+		var count int
+		err := rows.Scan(&service, &count)
+		ret[service] = count
+		if err != nil {
+			panic(err)
+		}
+	}
+	return ret
+}
+
 // 构建前端数据json
 func (s *Service) dataInfo() []byte {
 	var data ScreenInfo
+	serviceCount := s.getServiceCount()
+
 	data.Data.ReportCount = s.getReportCount()
 	data.Data.ErrCount = s.getErrCount()
 	data.Data.ValidAttack = s.getValidAttack()
 	data.Data.InvalidAttack = s.getInvalidAttack()
 	data.Data.DayAttack = s.getDayAverageCount()
+	data.Service.Mysql = serviceCount["MySQL"]
+	data.Service.Proxy = serviceCount["HTTP"]
+	data.Service.SSH = serviceCount["SSH"]
+
 	jsonInfo, _ := json.Marshal(&data)
 	fmt.Println(string(jsonInfo))
 	return jsonInfo
 }
 
-func (s *Service) getServiceStatus() {
-
-}
+/*
+	SELECT
+		type AS service,
+		sum( count ) AS total
+	FROM
+		`sp_infos`
+	GROUP BY
+		service
+*/

@@ -22,6 +22,6 @@ func (s *Service) init() {
 	//s.getValidAttack()
 	//s.dataInfo()
 	//s.genApiToken()
-	s.getDayAverageCount()
+	s.getServiceCount()
 	panic(s.Router.Run(s.UserConf.Panel.PanelAddr))
 }
