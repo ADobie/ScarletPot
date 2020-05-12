@@ -1,7 +1,6 @@
 package panel
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
@@ -28,14 +27,15 @@ func (s *Service) reportHandler(c *gin.Context) (int, interface{}) {
 		Valid:       1,
 		Invalid:     1,
 	}
-
 	if s.checkIfExist(data.AttackIP, data.Type, data.AccessToken) {
 		s.updateInfo(spInfos)
 		s.wsSend(s.dataInfo())
+		//log.DoLogs("success")
 		return s.successJSON("")
 	}
 
 	s.insertFirst(spInfos)
+	//log.DoLogs("success")
 	return s.successJSON("")
 }
 
@@ -63,7 +63,7 @@ func (s *Service) updateInfo(info SpInfo) {
 	// 旧数据拼接
 	s.Mysql.Where(map[string]interface{}{"attack_ip": info.AttackIP, "type": info.Type}).Find(&oldInfo)
 	if data.Valid == 1 {
-		fmt.Println(data.Valid)
+		//fmt.Println(data.Valid)
 		s.Mysql.Model(&info).Where("attack_ip = ? AND type = ?", info.AttackIP, info.Type).Update("valid", oldInfo.Valid+1)
 	} else {
 		s.Mysql.Model(&info).Where("attack_ip = ? AND type = ?", info.AttackIP, info.Type).Update("invalid", oldInfo.Invalid+1)

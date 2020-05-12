@@ -61,7 +61,7 @@ func Start() {
 		ssh.PasswordAuth(func(s ssh.Context, passwd string) bool {
 			info := s.User() + " " + passwd
 			arr := strings.Split(s.RemoteAddr().String(), ":")
-			log.Err("zh-CN", arr[0]+" 正在尝试连接")
+			log.Info("zh-CN", arr[0]+" 正在尝试连接")
 			report.Do("SSH", arr[0], "", info, country, city, region, 0)
 
 			username := conf.GetBaseConfig().SSH.User

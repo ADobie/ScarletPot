@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"net/http"
+	"strconv"
 )
 
 /* 控制查询蜜罐数据
@@ -63,7 +64,7 @@ import (
 // json数据格式
 type ScreenInfo struct {
 	Data struct {
-		ReportCount   int     `json:"reportCount"`
+		ReportCount   uint    `json:"reportCount"`
 		ErrCount      int     `json:"errCount"`
 		ValidAttack   int     `json:"validCount"`
 		InvalidAttack int     `json:"invalidCount"`
@@ -171,39 +172,48 @@ func (s *Service) ping(c *gin.Context) {
 }
 
 // 获取总上报次数
-func (s *Service) getReportCount() int {
-	rows, err := s.Mysql.Table("sp_infos").Select("sum(count) AS total").Rows()
-	if err != nil {
-		fmt.Println("报错1 %v", err)
-	}
-	defer rows.Close()
-	if rows.Next() {
-		total := 0
-		err := rows.Scan(&total)
-		if err != nil {
-			fmt.Println(err) //return 0, err
-		}
-		return total
-	}
-	return 0
+func (s *Service) getReportCount() uint {
+	//rows, err := s.Mysql.Table("sp_infos").Select("sum(count) AS total").Rows()
+	//if err != nil {
+	//	fmt.Println("报错1 %v", err)
+	//}
+	//defer rows.Close()
+	//if rows.Next() {
+	//	total := 0
+	//	err := rows.Scan(&total)
+	//	if err != nil {
+	//		fmt.Println(err) //return 0, err
+	//	}
+	//	return total
+	//}
+	//return 0
+	var spLogs SpLog
+	s.Mysql.Where(map[string]interface{}{"level": "report"}).Find(&spLogs)
+	//fmt.Println(spLogs.Count)
+	return spLogs.Count
+	//s.Mysql.Where()
 }
 
 // 获取上报错误次数
 func (s *Service) getErrCount() int {
-	rows, err := s.Mysql.Table("sp_logs").Select("sum(count) AS total").Rows()
-	if err != nil {
-		fmt.Println("报错1 %v", err)
-	}
-	defer rows.Close()
-	if rows.Next() {
-		total := 0
-		err := rows.Scan(&total)
-		if err != nil {
-			fmt.Println(err)
-		}
-		return total
-	}
-	return 0
+	//rows, err := s.Mysql.Table("sp_logs").Select("sum(count) AS total").Rows()
+	//if err != nil {
+	//	fmt.Println("报错1 %v", err)
+	//}
+	//defer rows.Close()
+	//if rows.Next() {
+	//	total := 0
+	//	err := rows.Scan(&total)
+	//	if err != nil {
+	//		fmt.Println(err)
+	//	}
+	//	return total
+	//}
+	var spLogs SpLog
+	s.Mysql.Where(map[string]interface{}{"level": "error"}).Find(&spLogs)
+	//fmt.Println(spLogs.Count)
+	return int(spLogs.Count)
+	//return 0
 }
 
 // 获取有效攻击数据
@@ -284,7 +294,8 @@ func (s *Service) getDayAverageCount() float64 {
 		}
 	}
 	average := sum / float64(count)
-	return average
+	value, _ := strconv.ParseFloat(fmt.Sprintf("%.2f", average), 64)
+	return value
 }
 
 // 各服务受攻击次数

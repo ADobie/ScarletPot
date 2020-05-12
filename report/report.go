@@ -52,6 +52,7 @@ func buildJson(atype string, attackIP string, webApp string, detail string, coun
 
 // 只需负责上报数据，具体是插入还是更新 由panel来负责
 func Do(atype string, attackIP string, webApp string, detail string, country string, city string, region string, valid uint) {
+	log.DoLogs("report")
 	info := buildJson(atype, attackIP, webApp, detail, country, city, region, valid)
 	fmt.Println(string(info))
 	resp, err := request.PostJson(apiUrl, info)

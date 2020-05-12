@@ -21,10 +21,12 @@ func (s *Service) logsHandler(c *gin.Context) (int, interface{}) {
 	if s.checkIfLogExist(data.Level, data.AccessToken) {
 		s.updateLog(spLogs)
 		s.wsSend(s.dataInfo())
+		//log.DoLogs("report")
 		return s.successJSON("")
 	}
 	s.insertLogFirst(spLogs)
 	s.wsSend(s.dataInfo())
+	//log.DoLogs("report")
 
 	//s.updateLog(spLogs)
 	return s.successJSON("")
@@ -52,3 +54,20 @@ func (s *Service) checkIfLogExist(level string, token string) bool {
 		return false
 	}
 }
+
+//func (s *Service) insertReportFirst(info SpLog) {
+//	s.Mysql.Create(&info)
+//}
+//
+//func (s *Service) insertReportCount(accessToken string) {
+//	var dataLog SpLog
+//	var oldData SpLog
+//	r := s.Mysql.Where(map[string]interface{}{"level": "report", "access_token": accessToken}).Find(&dataLog)
+//	fmt.Println(r.RowsAffected)
+//	if r.RowsAffected > 0 {
+//		s.Mysql.Where(map[string]interface{}{"level": "report", "access_token": accessToken}).Find(&oldData)
+//		s.Mysql.Model(&dataLog).Where("level = ? AND access_token = ?", "report", accessToken).Update("count", oldData.Count+1)
+//	} else {
+//		s.Mysql.Create(&dataLog)
+//	}
+//}
