@@ -3,10 +3,6 @@ package main
 import (
 	"scarletpot/panel"
 	"scarletpot/protocol/mysql"
-	"scarletpot/protocol/proxy"
-	"scarletpot/protocol/redis"
-	"scarletpot/protocol/ssh"
-	"scarletpot/protocol/web"
 	"scarletpot/utils/pool"
 )
 
@@ -27,11 +23,11 @@ func main() {
 	wg.Add(6)
 	poolX.Submit(func() {
 		go mysql.Start()
-		go ssh.Start()
-		go proxy.Start()
+		//go ssh.Start()
+		//go proxy.Start()
 		go panel.Start()
-		go redis.Start()
-		go web.Start()
+		//go redis.Start()
+		//go web.Start()
 	})
 	wg.Wait()
 	//ip.GetPos("123")

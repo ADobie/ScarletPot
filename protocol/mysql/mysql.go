@@ -3,7 +3,6 @@ package mysql
 import (
 	"bytes"
 	"encoding/binary"
-	"fmt"
 	"github.com/panjf2000/ants"
 	"net"
 	"scarletpot/report"
@@ -14,6 +13,7 @@ import (
 	"strings"
 	"sync"
 	"syscall"
+	"time"
 )
 
 // mysql-server 发送的握手包
@@ -44,6 +44,7 @@ var filename string
 var country, city, region string
 
 func Start() {
+
 	wg, poolX = pool.New(10)
 	defer poolX.Release()
 
@@ -55,11 +56,10 @@ func Start() {
 
 	for {
 		wg.Add(1)
-
 		poolX.Submit(func() {
+			time.Sleep(time.Second * 2)
 			conn, err := listener.Accept()
 			if err != nil {
-				//fmt.Println("zh-CN", "Mysql", "127.0.0.1", "Mysql 连接失败", err)
 				log.Err("zh-CN", "Mysql 连接失败", err)
 			}
 
@@ -77,6 +77,7 @@ func Start() {
 			//}
 
 			go connectionHandler(conn)
+			wg.Done()
 		})
 		wg.Wait()
 	}
@@ -97,14 +98,21 @@ func connectionHandler(conn net.Conn) {
 
 	_, err := conn.Write(handshakePack)
 	if err != nil {
-		log.Err("zh-CN", "握手包发送失败..")
+		log.Err("zh-CN", "握手包发送失败..", err)
 	}
 
 	// 获取客户端发送的包
 	_, err = conn.Read(ibuf[0 : bufLength-1])
-
+	if err != nil {
+		log.Err("zh-CN", "read", err)
+	}
+	//_, errTest := conn.Write(okPack)
+	//if errTest != nil {
+	//	log.Err("zh-CN", "", err)
+	//}
 	//判断是否有Can Use LOAD DATA LOCAL标志，如果有才支持读取文件
 	if (uint8(ibuf[4]) & uint8(128)) == 0 {
+		// 如果无法读取文件则直接关闭连接
 		_ = conn.Close()
 		//fmt.Println("该客户端无法读取文件")
 		log.Err("zh-CN", "该客户端无法读取文件")
@@ -113,7 +121,7 @@ func connectionHandler(conn net.Conn) {
 	}
 	_, err = conn.Write(okPack)
 	if err != nil {
-		log.Err("zh-CN", "ok包发送失败")
+		log.Err("zh-CN", "ok包发送失败", err)
 	}
 	_, err = conn.Read(ibuf[0 : bufLength-1])
 	getFileData := []byte{byte(len(filename) + 1), 0x00, 0x00, 0x01, 0xfb}
@@ -154,7 +162,7 @@ func getContent(conn net.Conn) {
 			if totalReadLength == totalDataLength {
 				// 上报信息至蜜罐
 				go report.Do("MySQL", ip, "", filename+"\n"+content.String(), country, city, region, 1)
-				fmt.Println(content.String())
+				//fmt.Println(content.String())
 				_, _ = conn.Write(okPack)
 			}
 		case syscall.EAGAIN: // try again
