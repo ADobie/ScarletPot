@@ -66,6 +66,7 @@ func Start() {
 			arr := strings.Split(conn.RemoteAddr().String(), ":")
 			ip = arr[0]
 			country, city, region = ipinfo.GetPos(ip)
+
 			//这里记录每个客户端连接的次数，实现获取多个文件
 			//_, ok := recordClient[ip]
 			//if ok {
@@ -93,7 +94,6 @@ func connectionHandler(conn net.Conn) {
 	log.Info("zh-CN", "收到来自 "+connFrom+" 的链接")
 
 	// 首次建立链接即记录 判定所有链接蜜罐的用户都为攻击者
-
 	report.Do("MySQL", ip, "", "建立链接", country, city, region, 1)
 
 	_, err := conn.Write(handshakePack)
@@ -106,10 +106,7 @@ func connectionHandler(conn net.Conn) {
 	if err != nil {
 		log.Err("zh-CN", "read", err)
 	}
-	//_, errTest := conn.Write(okPack)
-	//if errTest != nil {
-	//	log.Err("zh-CN", "", err)
-	//}
+
 	//判断是否有Can Use LOAD DATA LOCAL标志，如果有才支持读取文件
 	if (uint8(ibuf[4]) & uint8(128)) == 0 {
 		// 如果无法读取文件则直接关闭连接

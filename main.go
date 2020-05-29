@@ -1,8 +1,8 @@
 package main
 
 import (
+	"scarletpot/module/mysql"
 	"scarletpot/panel"
-	"scarletpot/protocol/mysql"
 	"scarletpot/utils/pool"
 )
 

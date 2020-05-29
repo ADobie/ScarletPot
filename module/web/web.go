@@ -23,7 +23,7 @@ func initJsonp() {
 	r := gin.Default()
 
 	r.GET("/", func(c *gin.Context) {
-		r.LoadHTMLGlob("./protocol/web/template/jsonp/index.html")
+		r.LoadHTMLGlob("./module/web/template/jsonp/index.html")
 		c.HTML(http.StatusOK, "index.html", gin.H{})
 		ip := strings.Split(c.Request.RemoteAddr, ":")[0]
 		country, city, region = ipinfo.GetPos(ip)

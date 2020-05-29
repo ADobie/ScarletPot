@@ -10,7 +10,7 @@ apiKeyR = ""                                    # 蜜罐信息apiKey
 apiQSecretR = ""                                # 蜜罐信息apiSec (通过 apikeyX 和apiSecretX 可通过接口获取 AccessToken)
 
 [mysql]
-file = "/etc/passwd"        					# 上钩后获取的攻击者信息
+file = "C:\\Windows\\System32\\drivers\\etc\\hosts"        					# 上钩后获取的攻击者信息
 addr = "0.0.0.0:3306"
 
 [ssh]
