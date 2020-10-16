@@ -137,6 +137,8 @@ func databaseInstall() error {
 			log.Err(lang, "install.db_connect_fail", err)
 			_ = databaseInstall()
 		}
+	} else if dbType == 2  {
+
 	}
 
 	//fmt.Println("数据库信息：", config.Database.DbType, config.Database.DbHost, config.Database.DbUser, config.Database.DbPass, config.Database.DbName)

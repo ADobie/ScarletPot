@@ -4,11 +4,11 @@
   lang = "zh-CN"
 
 [panel]
-  panelAddr = "0.0.0.0:9000"
+  panelAddr = "0.0.0.0:9001"
 
 [database]
-  dbType = "mysql"
+  dbType = "sqlite"
   dbHost = "localhost:33060"
   dbUser = "root"
   dbPass = "root"
-  dbName = "test"
+  dbName = "scarletpot"

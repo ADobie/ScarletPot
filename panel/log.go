@@ -33,20 +33,20 @@ func (s *Service) logsHandler(c *gin.Context) (int, interface{}) {
 }
 
 func (s *Service) insertLogFirst(info SpLog) {
-	s.Mysql.Create(&info)
+	s.Db.Create(&info)
 }
 
 func (s *Service) updateLog(info SpLog) {
 	var oldlogs SpLog
 	// 旧数据拼接
-	s.Mysql.Where(map[string]interface{}{"level": info.Level, "access_token": info.AccessToken}).Find(&oldlogs)
+	s.Db.Where(map[string]interface{}{"level": info.Level, "access_token": info.AccessToken}).Find(&oldlogs)
 	// 更新攻击次数
-	s.Mysql.Model(&info).Where("level = ? AND access_token = ?", info.Level, info.AccessToken).Update("count", oldlogs.Count+1)
+	s.Db.Model(&info).Where("level = ? AND access_token = ?", info.Level, info.AccessToken).Update("count", oldlogs.Count+1)
 }
 
 func (s *Service) checkIfLogExist(level string, token string) bool {
 	var data SpLog
-	res := s.Mysql.Where(map[string]interface{}{"level": level, "access_token": token}).Find(&data).RowsAffected
+	res := s.Db.Where(map[string]interface{}{"level": level, "access_token": token}).Find(&data).RowsAffected
 	// 攻击者单次攻击记录存在则返回true 否则返回false
 	if res > 0 {
 		return true

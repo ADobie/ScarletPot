@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
+
 	//"scarletpot/utils/conf"
 )
 
@@ -13,8 +14,11 @@ func CheckMysql(user string, pass string, host string, name string) (bool, error
 		pass,
 		host,
 		name))
+
 	if err != nil {
 		return false, err
 	}
+
 	return true, err
 }
+

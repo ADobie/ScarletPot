@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
+
 	"scarletpot/utils/log"
 	"time"
 )
@@ -122,11 +124,24 @@ func (s *Service) initMysql() {
 		s.UserConf.Database.DbHost,
 		s.UserConf.Database.DbName,
 	))
+
 	if err != nil {
 		log.Err(s.UserConf.Lang.Lang, "", err)
 	}
 
-	s.Mysql = db
+	s.Db = db
 	// 创建表自动迁移
-	s.Mysql.AutoMigrate(&SpAdmin{}, &SpInfo{}, &SpUser{}, &SpLog{})
+	s.Db.AutoMigrate(&SpAdmin{}, &SpInfo{}, &SpUser{}, &SpLog{})
+}
+
+func (s * Service) initSqlite() {
+	db, err := gorm.Open("sqlite3", fmt.Sprintf("./db/sqlite/database.db",
+		))
+
+		if err != nil {
+			panic(err)
+		}
+
+		s.Db = db
+		s.Db.AutoMigrate(&SpAdmin{}, &SpInfo{}, &SpUser{}, &SpLog{})
 }

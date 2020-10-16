@@ -11,13 +11,17 @@ type Service struct {
 	BaseConf conf.BaseConfig
 	UserConf conf.UserConfig
 	Router   *gin.Engine
-	Mysql    *gorm.DB
+	Db    *gorm.DB
 	Ws       *websocket.Conn
 }
 
 func (s *Service) init() {
 	s.initConfig()
-	s.initMysql()
+	if s.UserConf.Database.DbType == "mysql" {
+		s.initMysql()
+	} else {
+		s.initSqlite()
+	}
 	s.Router = s.initRouter()
 	//s.getValidAttack()
 	//s.dataInfo()

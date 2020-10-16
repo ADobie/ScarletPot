@@ -1,6 +1,7 @@
 package panel
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -100,6 +101,7 @@ type ScreenInfo struct {
 }
 
 var connClient = make(map[*websocket.Conn]bool)
+var rows *sql.Rows
 
 // 去除跨域限制
 var upGrader = websocket.Upgrader{
@@ -188,7 +190,7 @@ func (s *Service) getReportCount() uint {
 	//}
 	//return 0
 	var spLogs SpLog
-	s.Mysql.Where(map[string]interface{}{"level": "report"}).Find(&spLogs)
+	s.Db.Where(map[string]interface{}{"level": "report"}).Find(&spLogs)
 	//fmt.Println(spLogs.Count)
 	return spLogs.Count
 	//s.Mysql.Where()
@@ -210,7 +212,7 @@ func (s *Service) getErrCount() int {
 	//	return total
 	//}
 	var spLogs SpLog
-	s.Mysql.Where(map[string]interface{}{"level": "error"}).Find(&spLogs)
+	s.Db.Where(map[string]interface{}{"level": "error"}).Find(&spLogs)
 	//fmt.Println(spLogs.Count)
 	return int(spLogs.Count)
 	//return 0
@@ -218,7 +220,7 @@ func (s *Service) getErrCount() int {
 
 // 获取有效攻击数据
 func (s *Service) getValidAttack() int {
-	rows, err := s.Mysql.Table("sp_infos").Select("sum(valid) AS total").Rows()
+	rows, err := s.Db.Table("sp_infos").Select("sum(valid) AS total").Rows()
 	if err != nil {
 		fmt.Println("报错1 %v", err)
 	}
@@ -236,7 +238,7 @@ func (s *Service) getValidAttack() int {
 
 // 获取无效攻击次数
 func (s *Service) getInvalidAttack() int {
-	rows, err := s.Mysql.Table("sp_infos").Select("sum(invalid) AS total").Rows()
+	rows, err := s.Db.Table("sp_infos").Select("sum(invalid) AS total").Rows()
 	if err != nil {
 		fmt.Println("报错1 %v", err)
 	}
@@ -268,20 +270,38 @@ func (s *Service) getDayAverageCount() float64 {
 		ORDER BY
 			date ASC
 	*/
-	s.Mysql.Table("sp_infos").
-		Select("DATE_FORMAT(created_at, '%Y-%m-%d') AS date,sum( count ) AS day_attack").
-		Where("`created_at` > '2020-04-20' AND `created_at` < '2100-09-06'").
-		Group("DATE_FORMAT(created_at, '%Y-%m-%d')").
-		Order("DATE_FORMAT(created_at, '%Y-%m-%d') asc").Count(&count)
-
-	rows, err := s.Mysql.Table("sp_infos").
-		Select("DATE_FORMAT( created_at, '%Y-%m-%d' ) AS date,sum( count ) AS day_attack").
-		Where("`created_at` > '2020-04-20' AND `created_at` < '2100-09-06'").
-		Group("date").
-		Order("date asc").Rows()
-	if err != nil {
-		panic(err)
+	if s.UserConf.Database.DbType == "mysql" {
+		s.Db.Table("sp_infos").
+			Select("DATE_FORMAT(created_at, '%Y-%m-%d') AS date,sum( count ) AS day_attack").
+			Where("`created_at` > '2020-04-20' AND `created_at` < '2100-09-06'").
+			Group("DATE_FORMAT(created_at, '%Y-%m-%d')").
+			Order("DATE_FORMAT(created_at, '%Y-%m-%d') asc").Count(&count)
+		var err error
+		rows, err = s.Db.Table("sp_infos").
+			Select("DATE_FORMAT( created_at, '%Y-%m-%d' ) AS date,sum( count ) AS day_attack").
+			Where("`created_at` > '2020-04-20' AND `created_at` < '2100-09-06'").
+			Group("date").
+			Order("date asc").Rows()
+		if err != nil {
+			panic(err)
+		}
+	} else if s.UserConf.Database.DbType == "sqlite" {
+		s.Db.Table("sp_infos").
+			Select("strftime(created_at, '%Y-%m-%d') AS date,sum( count ) AS day_attack").
+			Where("`created_at` > '2020-04-20' AND `created_at` < '2100-09-06'").
+			Group("strftime(created_at, '%Y-%m-%d')").
+			Order("strftime(created_at, '%Y-%m-%d') asc").Count(&count)
+		var err error
+		rows, err = s.Db.Table("sp_infos").
+			Select("strftime( created_at, '%Y-%m-%d' ) AS date,sum( count ) AS day_attack").
+			Where("`created_at` > '2020-04-20' AND `created_at` < '2100-09-06'").
+			Group("date").
+			Order("date asc").Rows()
+		if err != nil {
+			panic(err)
+		}
 	}
+
 
 	var sum float64
 	for rows.Next() {
@@ -300,7 +320,7 @@ func (s *Service) getDayAverageCount() float64 {
 
 // 各服务受攻击次数
 func (s *Service) getServiceCount() map[string]int {
-	rows, err := s.Mysql.Table("sp_infos").Select("type as service, sum(count) as total").Group("service").Order("service desc").Rows()
+	rows, err := s.Db.Table("sp_infos").Select("type as service, sum(count) as total").Group("service").Order("service desc").Rows()
 	if err != nil {
 		panic(err)
 	}
